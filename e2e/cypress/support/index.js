@@ -12,3 +12,9 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
+
+import 'cypress-pipe';
+import '@testing-library/cypress/add-commands'
+
+import './commands';
+import './error-handlers';

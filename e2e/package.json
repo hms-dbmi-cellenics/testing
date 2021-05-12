@@ -16,5 +16,10 @@
     "url": "https://github.com/biomage-ltd/testing/issues"
   },
   "homepage": "https://github.com/biomage-ltd/testing#readme",
-  "devDependencies": {}
+  "devDependencies": {},
+  "dependencies": {
+    "@testing-library/cypress": "^7.0.6",
+    "cypress": "^7.3.0",
+    "cypress-pipe": "^2.0.0"
+  }
 }
