@@ -3,10 +3,22 @@ context('Smoke Test', () => {
     const EXPERIMENT_ID = Cypress.env('EXPERIMENT_ID') ?? 'e52b39624588791a7889e39c617f669e';
     const GENE_IN_TOOLS = Cypress.env('GENE_IN_TOOLS') ?? 'Lyz2';
 
+    const getPipelineApiUrl = () => {
+      const baseUrl = Cypress.config().baseUrl;
+      let server = 'http://localhost:3000';
+      if (!baseUrl.startsWith('http://localhost')) {
+        server = baseUrl.replace('//ui-', '//api-') ;
+      }
+      return `${server}/v1/experiments/${EXPERIMENT_ID}/pipelines`;
+    };
 
-    const testDataProcessing = () => {
-      cy.visit(`/experiments/${EXPERIMENT_ID}/data-processing`);
-      
+    const startPipelineViaApi = () => {
+      const url = getPipelineApiUrl(); 
+      cy.log(`Starting pipeline by POSTing to ${url}`);
+      cy.request('POST', url, {});
+    };
+    
+    const startPipelineViaUI = () => {
       // Verify that the first filter is disabled by prefiltered samples, and move past it
       // cy.get('[role=alert]')
       //   .should('contain.text', 'pre-filtered');
@@ -18,7 +30,19 @@ context('Smoke Test', () => {
       cy.get('[data-testid=enableFilterButton]').click();
       cy.get('[data-testid=enableFilterButton]').click();
       cy.get('[data-testid=runFilterButton]').click();
+    };
 
+    const testDataProcessing = () => {
+      cy.visit(`/experiments/${EXPERIMENT_ID}/data-processing`);
+
+      const useApi = true;
+
+      if (useApi) {
+        startPipelineViaApi();
+      } else {
+        startPipelineViaUI();
+      }
+    
       const numSteps = 7;
       const stepTimeOut = 60 * 1000;
       const oneStepTimeout = { timeout: stepTimeOut };
@@ -39,7 +63,7 @@ context('Smoke Test', () => {
     const testDataExploration = () => {
       
       cy.visit(`/experiments/${EXPERIMENT_ID}/data-exploration`);
-      const dataExplorationTimeOut = { timeout: 30 * 1000 };
+      const dataExplorationTimeOut = { timeout: 40 * 1000 };
 
       // The clusters are loaded
       // Mosaic is not very testing friendly :-(
@@ -73,10 +97,11 @@ context('Smoke Test', () => {
             const tryAgainButton = $tools.find(':contains("Try again")');
             const waitingBanner = $tools.find(':contains("getting your data")');
             attempts += 1;
-            if (attempts > maxRetryAttempts) {
-              throw new Error('Number of retry attemps exceeded. Is there something wrong with the worker?');
-            }
-            else if (tryAgainButton.length) {
+            if (tryAgainButton.length) {
+              attempts += 1;
+              if (attempts > maxRetryAttempts) {
+                throw new Error('Number of retry attemps exceeded. Is there something wrong with the worker?');
+              }
               clickOnRetyButton();
               cy.wait(100).then(checkAndRetry);
             } else if (waitingBanner.length) {
