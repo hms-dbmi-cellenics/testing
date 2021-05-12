@@ -16,7 +16,12 @@
     "url": "https://github.com/biomage-ltd/testing/issues"
   },
   "homepage": "https://github.com/biomage-ltd/testing#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-cypress": "^2.11.3",
+    "eslint-plugin-import": "^2.22.1"
+  },
   "dependencies": {
     "@testing-library/cypress": "^7.0.6",
     "cypress": "^7.3.0",
