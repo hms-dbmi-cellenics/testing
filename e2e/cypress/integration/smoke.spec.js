@@ -2,9 +2,9 @@ context('Smoke Test', () => {
 
     const EXPERIMENT_ID = Cypress.env('EXPERIMENT_ID') ?? 'e52b39624588791a7889e39c617f669e';
     const GENE_IN_TOOLS = Cypress.env('GENE_IN_TOOLS') ?? 'Lyz2';
- 
-    it.only('runs the pipeline and can move to data exploration', () => {
 
+
+    const testDataProcessing = () => {
       cy.visit(`/experiments/${EXPERIMENT_ID}/data-processing`);
       
       // Verify that the first filter is disabled by prefiltered samples, and move past it
@@ -34,8 +34,10 @@ context('Smoke Test', () => {
       cy.get('[role=progressbar]', )
         .invoke(restOfStepsTimeout, 'attr', 'aria-valuenow')
         .should('equal', `${numSteps}`);
+    };
 
-      // Move to Data Exploration 
+    const testDataExploration = () => {
+      
       cy.visit(`/experiments/${EXPERIMENT_ID}/data-exploration`);
       const dataExplorationTimeOut = { timeout: 30 * 1000 };
 
@@ -85,6 +87,13 @@ context('Smoke Test', () => {
           }
           checkAndRetry();
         });
+    };
+    
+    it.only('runs the pipeline and can move to data exploration', () => {
+
+      testDataProcessing();
+      testDataExploration();
+
     })
   })
   
