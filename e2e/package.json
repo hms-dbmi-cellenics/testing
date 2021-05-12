@@ -1,0 +1,20 @@
+{
+  "name": "e2e",
+  "version": "1.0.0",
+  "description": "Cypress end-to-end testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biomage-ltd/testing.git"
+  },
+  "author": "Biomage Ltd.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/biomage-ltd/testing/issues"
+  },
+  "homepage": "https://github.com/biomage-ltd/testing#readme",
+  "devDependencies": {}
+}
