@@ -2,7 +2,7 @@ import processingUpdate from '../fixtures/processingConfig.json';
 
 context('Smoke Test', () => {
   const EXPERIMENT_IDS = Cypress.env('EXPERIMENT_IDS') ?? 'e52b39624588791a7889e39c617f669e';
-  const GENE_IN_TOOLS = Cypress.env('GENE_IN_TOOLS') ?? 'Lyz2';
+  const SECONDS_PER_STEP = Cypress.env('SECONDS_PER_STEP') ?? 180;
 
   const isLocalEnv = () => Cypress.config().baseUrl.startsWith('http://localhost');
 
@@ -70,7 +70,7 @@ context('Smoke Test', () => {
     }
 
     const numSteps = 7;
-    const stepTimeOut = 60 * 1000;
+    const stepTimeOut = SECONDS_PER_STEP * 1000;
     const firstStepTimeout = { timeout: stepTimeOut * 2 };
     const restOfStepsTimeout = { timeout: stepTimeOut * (numSteps - 1) };
 
@@ -93,17 +93,26 @@ context('Smoke Test', () => {
     // The clusters are loaded
     // Mosaic is not very testing friendly :-(
     cy.get('.mosaic-window', dataExplorationTimeOut)
-      .should('contain.text', 'Data Management')
-      .and('contain.text', 'Cluster 1');
+      .contains('.mosaic-window', 'Data Management')
+      .then(($dataManagement) => {
+        // Clusters can be renamed. Or they can even not be there
+        // Scratchpad is there, but may be outside of the visible area
+        cy.wrap($dataManagement)
+          .should('have.descendants', '[aria-label="eye"]')
+          .and('have.descendants', ':contains("Scratchpad")');
+      });
 
     // The list of gens is loaded so that we know that the worker has done something
     const maxRetryAttempts = 3;
     cy.get('.mosaic-window', dataExplorationTimeOut)
-      .contains('Tools')
-      .then(($toolsTitle) => {
-        const $tools = $toolsTitle.parent().parent();
+      .contains('.mosaic-window', 'Tools')
+      .then(($tools) => {
         const verifyGeneDisplayed = () => {
-          cy.wrap($tools).should('contain.text', GENE_IN_TOOLS);
+          cy.wrap($tools)
+            .find('tr:nth-of-type(2)')
+            .find('a')
+            .invoke('attr', 'href')
+            .should('match', /.*genecards.*/);
         };
         const waitForWaitingBannerToGoAway = (callBack) => {
           cy.wrap($tools, dataExplorationTimeOut)
