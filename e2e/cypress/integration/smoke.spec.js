@@ -1,29 +1,39 @@
-import processingUpdate from '../fixtures/processingConfig';
+import processingUpdate from '../fixtures/processingConfig.json';
 
 context('Smoke Test', () => {
-  const EXPERIMENT_ID = Cypress.env('EXPERIMENT_ID') ?? 'e52b39624588791a7889e39c617f669e';
+  const EXPERIMENT_IDS = Cypress.env('EXPERIMENT_IDS') ?? 'e52b39624588791a7889e39c617f669e';
   const GENE_IN_TOOLS = Cypress.env('GENE_IN_TOOLS') ?? 'Lyz2';
+
+  const isLocalEnv = () => Cypress.config().baseUrl.startsWith('http://localhost');
 
   const getApiServer = () => {
     const { baseUrl } = Cypress.config();
     let server = 'http://localhost:3000';
-    if (!baseUrl.startsWith('http://localhost')) {
+    if (!isLocalEnv()) {
       server = baseUrl.replace('//ui-', '//api-');
     }
     return server;
   };
 
-  const getPipelineApiUrl = () => `${getApiServer()}/v1/experiments/${EXPERIMENT_ID}/pipelines`;
-  const getProcessingUpdateApiUrl = () => `${getApiServer()}/v1/experiments/${EXPERIMENT_ID}/processingConfig`;
+  const getPipelineApiUrl = (experimentId) => `${getApiServer()}/v1/experiments/${experimentId}/pipelines`;
+  const getProcessingUpdateApiUrl = (experimentId) => `${getApiServer()}/v1/experiments/${experimentId}/processingConfig`;
 
-  const startPipelineViaApi = () => {
-    const url = getPipelineApiUrl();
+  const startPipelineViaApi = (experimentId) => {
+    const url = getPipelineApiUrl(experimentId);
     cy.log(`Starting pipeline by POSTing to ${url}`);
     cy.request('POST', url, {});
   };
 
-  const cleanProcessingConfig = () => {
-    const url = getProcessingUpdateApiUrl();
+  const shouldCleanProcessingConfig = () => {
+    // On local, do it unless overriden
+    // On a server, only if specified
+    const forcedCleanupTxt = Cypress.env('CLEANUP_PROCESSING_CONFIG');
+    const forcedCleanup = forcedCleanupTxt === 1 || ['1', 'true', 'on'].includes[forcedCleanupTxt?.toLowerCase()];
+    return forcedCleanup || (isLocalEnv() && !forcedCleanupTxt);
+  };
+
+  const cleanProcessingConfig = (experimentId) => {
+    const url = getProcessingUpdateApiUrl(experimentId);
     cy.log(`Initialising ProcessingConfig values by PUTting to ${url}`);
     cy.request('PUT', url, processingUpdate);
   };
@@ -42,29 +52,33 @@ context('Smoke Test', () => {
     cy.get('[data-testid=runFilterButton]').click();
   };
 
-  const testDataProcessing = () => {
-    cleanProcessingConfig();
+  const testDataProcessing = (experimentId) => {
+    if (shouldCleanProcessingConfig()) {
+      cleanProcessingConfig(experimentId);
+    } else {
+      cy.log(`Not cleaning up the ProcessingConfig values (CLEANUP_PROCESSING_CONFIG=${Cypress.env('CLEANUP_PROCESSING_CONFIG')})`);
+    }
 
-    cy.visit(`/experiments/${EXPERIMENT_ID}/data-processing`);
+    cy.visit(`/experiments/${experimentId}/data-processing`);
 
     const useApi = true;
 
     if (useApi) {
-      startPipelineViaApi();
+      startPipelineViaApi(experimentId);
     } else {
       startPipelineViaUI();
     }
 
     const numSteps = 7;
     const stepTimeOut = 60 * 1000;
-    const oneStepTimeout = { timeout: stepTimeOut };
+    const firstStepTimeout = { timeout: stepTimeOut * 2 };
     const restOfStepsTimeout = { timeout: stepTimeOut * (numSteps - 1) };
 
     // Wait for the pipeline to start.
     // Starting the pipeline can result in us getting in a skeleton state,
     // so we need a higher timeout also to get the progressbar
-    cy.get('[role=progressbar]', oneStepTimeout)
-      .invoke(oneStepTimeout, 'attr', 'aria-valuenow')
+    cy.get('[role=progressbar]', firstStepTimeout)
+      .invoke(firstStepTimeout, 'attr', 'aria-valuenow')
       .should('equal', '1');
     // Wait for the pipeline to complete
     cy.get('[role=progressbar]')
@@ -72,8 +86,8 @@ context('Smoke Test', () => {
       .should('equal', `${numSteps}`);
   };
 
-  const testDataExploration = () => {
-    cy.visit(`/experiments/${EXPERIMENT_ID}/data-exploration`);
+  const testDataExploration = (experimentId) => {
+    cy.visit(`/experiments/${experimentId}/data-exploration`);
     const dataExplorationTimeOut = { timeout: 40 * 1000 };
 
     // The clusters are loaded
@@ -123,8 +137,10 @@ context('Smoke Test', () => {
       });
   };
 
-  it.only('runs the pipeline and can move to data exploration', () => {
-    testDataProcessing();
-    testDataExploration();
+  EXPERIMENT_IDS.split(':').forEach((experimentId) => {
+    it(`runs the pipeline and moves to data exploration (${experimentId})`, () => {
+      testDataProcessing(experimentId);
+      testDataExploration(experimentId);
+    });
   });
 });
