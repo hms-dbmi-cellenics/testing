@@ -2,7 +2,7 @@ import processingUpdate from '../fixtures/processingConfig.json';
 
 context('Smoke Test', () => {
   const EXPERIMENT_IDS = Cypress.env('EXPERIMENT_IDS') ?? 'e52b39624588791a7889e39c617f669e';
-  const SECONDS_PER_STEP = Cypress.env('SECONDS_PER_STEP') ?? 180;
+  const SECONDS_PER_STEP = Cypress.env('SECONDS_PER_STEP') ?? 360;
 
   const isLocalEnv = () => Cypress.config().baseUrl.startsWith('http://localhost');
 
@@ -70,25 +70,42 @@ context('Smoke Test', () => {
     }
 
     const numSteps = 7;
-    const stepTimeOut = SECONDS_PER_STEP * 1000;
-    const firstStepTimeout = { timeout: stepTimeOut * 2 };
-    const restOfStepsTimeout = { timeout: stepTimeOut * (numSteps - 1) };
+    const stepTimeOut = { timeout: SECONDS_PER_STEP * 1000 };
 
     // Wait for the pipeline to start.
     // Starting the pipeline can result in us getting in a skeleton state,
     // so we need a higher timeout also to get the progressbar
-    cy.get('[role=progressbar]', firstStepTimeout)
-      .invoke(firstStepTimeout, 'attr', 'aria-valuenow')
+    cy.get('[role=progressbar]', stepTimeOut)
+      .invoke(stepTimeOut, 'attr', 'aria-valuenow')
       .should('equal', '1');
-    // Wait for the pipeline to complete
-    cy.get('[role=progressbar]')
-      .invoke(restOfStepsTimeout, 'attr', 'aria-valuenow')
-      .should('equal', `${numSteps}`);
+
+    const validNextStepsRegExp = (lastKnown) => {
+      const steps = [...Array(numSteps - lastKnown).keys()].map((i) => i + lastKnown + 1);
+      return new RegExp(steps.join('|'));
+    };
+    const waitForFollowingStep = (lastKnown) => {
+      cy.get('[role=progressbar]', stepTimeOut)
+        .invoke(stepTimeOut, 'attr', 'aria-valuenow')
+        .should('match', validNextStepsRegExp(lastKnown))
+        .then((currentStepAsText) => {
+          const currentStep = parseInt(currentStepAsText, 10);
+          cy.get('[data-testid=pipelineNextStep]', stepTimeOut)
+            .should('be.enabled')
+            .click()
+            .then(() => {
+              if (currentStep < numSteps) {
+                waitForFollowingStep(currentStep);
+              }
+            });
+        });
+    };
+
+    waitForFollowingStep(1);
   };
 
   const testDataExploration = (experimentId) => {
     cy.visit(`/experiments/${experimentId}/data-exploration`);
-    const dataExplorationTimeOut = { timeout: 40 * 1000 };
+    const dataExplorationTimeOut = { timeout: 180 * 1000 };
 
     // The clusters are loaded
     // Mosaic is not very testing friendly :-(
@@ -107,6 +124,10 @@ context('Smoke Test', () => {
     cy.get('.mosaic-window', dataExplorationTimeOut)
       .contains('.mosaic-window', 'Tools')
       .then(($tools) => {
+        const literals = {
+          waitIfWorkerRunning: 'getting your data',
+          waitIfWorkerNotRunning: 'will take a few minutes',
+        };
         const verifyGeneDisplayed = () => {
           cy.wrap($tools)
             .find('tr:nth-of-type(2)')
@@ -114,9 +135,9 @@ context('Smoke Test', () => {
             .invoke('attr', 'href')
             .should('match', /.*genecards.*/);
         };
-        const waitForWaitingBannerToGoAway = (callBack) => {
+        const waitForWaitingBannerToGoAway = (text, callBack) => {
           cy.wrap($tools, dataExplorationTimeOut)
-            .should('not.contain', 'getting your data')
+            .should('not.contain', text)
             .then(callBack);
         };
         const clickOnRetyButton = () => {
@@ -128,7 +149,8 @@ context('Smoke Test', () => {
         function checkAndRetry() {
           // synchronous queries, using jQuery
           const tryAgainButton = $tools.find(':contains("Try again")');
-          const waitingBanner = $tools.find(':contains("getting your data")');
+          const workerRunningBanner = $tools.find(`:contains("${literals.waitIfWorkerRunning}")`);
+          const workerNotRunningBanner = $tools.find(`:contains("${literals.waitIfWorkerNotRunning}")`);
           if (tryAgainButton.length) {
             attempts += 1;
             if (attempts > maxRetryAttempts) {
@@ -136,8 +158,10 @@ context('Smoke Test', () => {
             }
             clickOnRetyButton();
             cy.wait(100).then(checkAndRetry); // eslint-disable-line cypress/no-unnecessary-waiting
-          } else if (waitingBanner.length) {
-            waitForWaitingBannerToGoAway(checkAndRetry);
+          } else if (workerRunningBanner.length) {
+            waitForWaitingBannerToGoAway(literals.waitIfWorkerRunning, checkAndRetry);
+          } else if (workerNotRunningBanner.length) {
+            waitForWaitingBannerToGoAway(literals.waitIfWorkerNotRunning, checkAndRetry);
           } else {
             verifyGeneDisplayed();
           }
