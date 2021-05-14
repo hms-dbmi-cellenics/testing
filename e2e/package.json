@@ -25,6 +25,7 @@
   "dependencies": {
     "@testing-library/cypress": "^7.0.6",
     "cypress": "^7.3.0",
-    "cypress-pipe": "^2.0.0"
+    "cypress-pipe": "^2.0.0",
+    "glob": "^7.1.7"
   }
 }
