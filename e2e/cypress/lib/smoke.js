@@ -1,7 +1,5 @@
 import processingUpdate from '../fixtures/processingConfig.json';
 
-const SECONDS_PER_STEP = Cypress.env('SECONDS_PER_STEP') ?? 360;
-
 const isLocalEnv = () => Cypress.config().baseUrl.startsWith('http://localhost');
 
 const getApiServer = () => {
@@ -67,8 +65,11 @@ const testDataProcessing = (experimentId) => {
     startPipelineViaUI();
   }
 
-  const numSteps = 7;
-  const stepTimeOut = { timeout: SECONDS_PER_STEP * 1000 };
+  const NUM_STEPS = 7;
+  const FIRST_ATTEMPT_MINUTES_PER_STEP = 5;
+  const NEXT_ATTEMPTS_MINUTES_PER_STEP = 30;
+  const minutesPerStep = cy.state('test').currentRetry() ? NEXT_ATTEMPTS_MINUTES_PER_STEP : FIRST_ATTEMPT_MINUTES_PER_STEP;
+  const stepTimeOut = { timeout: minutesPerStep * 60 * 1000 };
 
   // Wait for the pipeline to start.
   // Starting the pipeline can result in us getting in a skeleton state,
@@ -78,7 +79,7 @@ const testDataProcessing = (experimentId) => {
     .should('equal', '1');
 
   const validNextStepsRegExp = (lastKnown) => {
-    const steps = [...Array(numSteps - lastKnown).keys()].map((i) => i + lastKnown + 1);
+    const steps = [...Array(NUM_STEPS - lastKnown).keys()].map((i) => i + lastKnown + 1);
     return new RegExp(steps.join('|'));
   };
   const waitForFollowingStep = (lastKnown) => {
@@ -91,7 +92,7 @@ const testDataProcessing = (experimentId) => {
           .should('be.enabled')
           .click()
           .then(() => {
-            if (currentStep < numSteps) {
+            if (currentStep < NUM_STEPS) {
               waitForFollowingStep(currentStep);
             }
           });
