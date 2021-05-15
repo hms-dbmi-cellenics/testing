@@ -71,13 +71,6 @@ const testDataProcessing = (experimentId) => {
   const minutesPerStep = cy.state('test').currentRetry() ? NEXT_ATTEMPTS_MINUTES_PER_STEP : FIRST_ATTEMPT_MINUTES_PER_STEP;
   const stepTimeOut = { timeout: minutesPerStep * 60 * 1000 };
 
-  // Wait for the pipeline to start.
-  // Starting the pipeline can result in us getting in a skeleton state,
-  // so we need a higher timeout also to get the progressbar
-  cy.get('[role=progressbar]', stepTimeOut)
-    .invoke(stepTimeOut, 'attr', 'aria-valuenow')
-    .should('equal', '1');
-
   const validNextStepsRegExp = (lastKnown) => {
     const steps = [...Array(NUM_STEPS - lastKnown).keys()].map((i) => i + lastKnown + 1);
     return new RegExp(steps.join('|'));
@@ -99,7 +92,18 @@ const testDataProcessing = (experimentId) => {
       });
   };
 
-  waitForFollowingStep(1);
+  // Wait for the pipeline to change its initial value
+  // and then wait step by step
+  cy.get('[role=progressbar]', stepTimeOut)
+    .invoke(stepTimeOut, 'attr', 'aria-valuenow')
+    .then((initialStep) => {
+      cy.get('[role=progressbar]', stepTimeOut)
+        .invoke(stepTimeOut, 'attr', 'aria-valuenow')
+        .should('not.equal', initialStep)
+        .then(() => {
+          waitForFollowingStep(1);
+        });
+    });
 };
 
 const testDataExploration = (experimentId) => {
