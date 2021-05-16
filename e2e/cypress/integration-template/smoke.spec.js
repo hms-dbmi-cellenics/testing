@@ -11,8 +11,10 @@ const retries = {
 };
 
 describe(`Smoke test for experiment ${experimentId}`, retries, () => {
-  it('runs the pipeline and moves to data exploration', () => {
+  it('can run the pipeline', () => {
     testDataProcessing(experimentId);
+  });
+  it('can load data exploration', retries, () => {
     testDataExploration(experimentId);
   });
 });
