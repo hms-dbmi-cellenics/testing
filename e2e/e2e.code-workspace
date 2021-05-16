@@ -17,7 +17,6 @@
 		},
 		"markdownlint.config": {
 			"default": true,
-			"MD003": { "style": "setext_with_atx" },
 			"MD034": false,
 			"MD046": false
 		}
