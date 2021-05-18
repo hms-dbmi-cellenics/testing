@@ -1,0 +1,17 @@
+Environments:
+  local:
+    url: http://localhost:5000
+    experiments:
+      - e52b39624588791a7889e39c617f669e
+  staging:
+    url: https://ui-xavier-ui249.scp-staging.biomage.net
+    experiments:
+      - xavier-e2e-test-9e4901784c74661c912133b9a2b63939  # user1
+      - xavier-e2e-test-52df58315903e78c8350f1abbd27e358  # user2
+      - xavier-e2e-test-87583e3eb71e4ad3f9ff60f10305e048  # user3
+      - xavier-e2e-test-7d9318d157a6b17d3d6caec23a25cc86  # user4
+      - xavier-e2e-test-9a2af7d21440fed7a490bc0deedff17a  # user5
+      - xavier-e2e-test-e362b132cc0aaa7e2e36e094523749d5  # user6
+      - xavier-e2e-test-908e92ed32ecc686b3dd3315642c1fa7  # user7
+      - xavier-e2e-test-d6091793474964a2d651cf249c66bb07  # user8
+      - xavier-e2e-test-b7fbc7f4de8c09f95bfd69881261f44c  # user9

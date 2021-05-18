@@ -4,7 +4,10 @@
   "description": "Cypress end-to-end testing",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cy:open": "cmd(){ node scripts/setup.js $1 && cypress open; }; cmd",
+    "cy:run": "cmd(){ node scripts/setup.js $1 && cypress run; }; cmd",
+    "cy:run:chrome": "cmd(){ node scripts/setup.js $1 && cypress run --browser chrome; }; cmd",
+    "test": "npm run cy:run $1"
   },
   "repository": {
     "type": "git",
@@ -26,6 +29,7 @@
     "@testing-library/cypress": "^7.0.6",
     "cypress": "^7.3.0",
     "cypress-pipe": "^2.0.0",
-    "glob": "^7.1.7"
+    "glob": "^7.1.7",
+    "yaml": "^1.10.2"
   }
 }
