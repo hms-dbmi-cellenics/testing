@@ -7,6 +7,8 @@ const getApiServer = () => {
   let server = 'http://localhost:3000';
   if (!isLocalEnv()) {
     server = baseUrl.replace('//ui-', '//api-');
+    const serverOnly = /https:\/\/[^/\s]+/;
+    [server] = server.match(serverOnly);
   }
   return server;
 };
