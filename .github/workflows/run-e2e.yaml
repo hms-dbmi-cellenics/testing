@@ -10,7 +10,7 @@ on:
   schedule:
     # * is a special character in YAML so you have to quote this string
     # - cron:  '0 0 * * *'
-    - cron:  '*/5 * * * *'
+    - cron:  '*/10 * * * *'
 
 jobs:
   run-e2e:
@@ -32,4 +32,4 @@ jobs:
         name: Run e2e tests
         run: |-
           cd e2e/
-          K8S_ENV=${{ github.event.inputs.environment }} npm start
+          K8S_ENV=${{ github.event.inputs.environment || 'production' }} npm start
