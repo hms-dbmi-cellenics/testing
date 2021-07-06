@@ -20,14 +20,10 @@ jobs:
         name: Check out source code
         uses: actions/checkout@v2
 
-      - id: cwd
-        name: Change to e2e working directory
-        run: |-
-          cd e2e/
-
       - id: install
         name: Install dependencies
         run: |-
+          cd e2e/
           git config --global url."https://".insteadOf ssh://
           npm ci
 
