@@ -5,7 +5,7 @@ describe('Redirects to login page when unauthenticated', () => {
     cy.visit('/data-management');
   });
 
-  it('redirects to the appropriate login page', () => {
-    cy.url().should('include', 'biomage.auth.eu-west-1.amazoncognito.com');
+  it('redirects to a login page', () => {
+    cy.url().should('include', 'auth.eu-west-1.amazoncognito.com');
   });
 });

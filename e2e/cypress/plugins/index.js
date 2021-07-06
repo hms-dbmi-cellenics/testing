@@ -23,16 +23,16 @@ module.exports = (on, config) => {
     }
   }
 
-  if (!process.env.E2E_LOGIN_USER) {
-    throw new Error('LOGIN_USER must be a valid username for log into the platform.');
-  }
+  // if (!process.env.E2E_LOGIN_USER) {
+  //   throw new Error('LOGIN_USER must be a valid username for log into the platform.');
+  // }
 
-  if (!process.env.E2E_LOGIN_PASSWORD) {
-    throw new Error('LOGIN_PASSWORD must be a valid username for logging into the platform.');
-  }
+  // if (!process.env.E2E_LOGIN_PASSWORD) {
+  //   throw new Error('LOGIN_PASSWORD must be a valid username for logging into the platform.');
+  // }
 
-  config.env.username = process.env.E2E_LOGIN_USER;
-  config.env.password = process.env.E2E_LOGIN_PASSWORD;
+  // config.env.username = process.env.E2E_LOGIN_USER;
+  // config.env.password = process.env.E2E_LOGIN_PASSWORD;
 
   return config;
 };
