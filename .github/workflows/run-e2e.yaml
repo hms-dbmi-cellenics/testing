@@ -30,4 +30,5 @@ jobs:
       - id: test
         name: Run e2e tests
         run: |-
+          cd e2e/
           npm start
