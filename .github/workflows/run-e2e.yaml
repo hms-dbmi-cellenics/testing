@@ -31,4 +31,4 @@ jobs:
         name: Run e2e tests
         run: |-
           cd e2e/
-          npm start
+          K8S_ENV=${{ github.event.inputs.environment }} npm start
