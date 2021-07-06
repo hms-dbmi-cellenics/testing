@@ -1,24 +1,10 @@
 {
   "name": "e2e",
   "version": "1.0.0",
-  "description": "Cypress end-to-end testing",
+  "description": "End-to-end testing of Biomage single-cell platform",
   "main": "index.js",
-  "scripts": {
-    "cy:open": "cmd(){ node scripts/setup.js $1 && cypress open; }; cmd",
-    "cy:run": "cmd(){ node scripts/setup.js $1 && cypress run; }; cmd",
-    "cy:run:chrome": "cmd(){ node scripts/setup.js $1 && cypress run --browser chrome; }; cmd",
-    "test": "npm run cy:run $1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/biomage-ltd/testing.git"
-  },
-  "author": "Biomage Ltd.",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/biomage-ltd/testing/issues"
-  },
-  "homepage": "https://github.com/biomage-ltd/testing#readme",
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
     "eslint": "^7.26.0",
     "eslint-config-airbnb-base": "^14.2.1",
@@ -26,10 +12,11 @@
     "eslint-plugin-import": "^2.22.1"
   },
   "dependencies": {
-    "@testing-library/cypress": "^7.0.6",
-    "cypress": "^7.3.0",
-    "cypress-pipe": "^2.0.0",
-    "glob": "^7.1.7",
-    "yaml": "^1.10.2"
+    "cypress": "^7.6.0",
+    "aws-amplify": "^4.1.2"
+  },
+  "scripts": {
+    "start": "npx cypress run",
+    "dev": "npx cypress open"
   }
 }

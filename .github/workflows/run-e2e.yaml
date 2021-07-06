@@ -1,0 +1,36 @@
+name: Run end-to-end tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment to run the tests on (development, staging, production)'
+        required: false
+        default: 'production'
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 0 * * *'
+
+jobs:
+  run-e2e:
+    name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment) }}
+    runs-on: ubuntu-20.04
+    steps:
+      - id: checkout
+        name: Check out source code
+        uses: actions/checkout@v2
+
+      - id: cache-seek
+        name: Check for npm cache hit
+        uses: c-hive/gha-npm-cache@v1
+
+      - id: install
+        name: Install dependencies
+        run: |-
+          git config --global url."https://".insteadOf ssh://
+          npm ci
+
+      - id: test
+        name: Run e2e tests
+        run: |-
+          npm start
