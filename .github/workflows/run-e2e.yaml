@@ -8,9 +8,7 @@ on:
         required: false
         default: 'production'
   schedule:
-    # * is a special character in YAML so you have to quote this string
-    # - cron:  '0 0 * * *'
-    - cron:  '*/10 * * * *'
+    - cron:  '22 2 * * *'
 
 jobs:
   run-e2e:
