@@ -25,10 +25,6 @@ jobs:
         run: |-
           cd e2e/
 
-      - id: cache-seek
-        name: Check for npm cache hit
-        uses: c-hive/gha-npm-cache@v1
-
       - id: install
         name: Install dependencies
         run: |-
