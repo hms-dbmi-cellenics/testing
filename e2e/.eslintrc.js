@@ -17,6 +17,7 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
   },
   rules: {
+    'no-param-reassign': 'off',
   },
   plugins: [
     'cypress',

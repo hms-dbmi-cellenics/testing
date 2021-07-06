@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": true,
+			"source.fixAll.markdownlint": true
+		},
+		"[javascript]": {
+			"editor.tabSize": 2,
+			"editor.insertSpaces": true,
+			"editor.detectIndentation": false,
+			"editor.formatOnPaste": true,
+			"editor.formatOnSave": true
+		},
+		"markdownlint.config": {
+			"default": true,
+			"MD034": false,
+			"MD046": false
+		}
+	}
+}
