@@ -12,7 +12,7 @@ on:
 
 jobs:
   run-e2e:
-    name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment) }}
+    name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment || 'production') }}
     runs-on: ubuntu-20.04
     steps:
       - id: checkout
