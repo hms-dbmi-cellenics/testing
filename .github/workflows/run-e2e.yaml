@@ -31,3 +31,14 @@ jobs:
         run: |-
           cd e2e/
           K8S_ENV=${{ github.event.inputs.environment || 'production' }} npm start
+
+      - id: send-to-slack
+        name: Send failure notification to Slack
+        if: failure() && github.event_name == 'push'
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: pipelines
+          status: FAILED
+          color: danger
