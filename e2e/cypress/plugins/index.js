@@ -9,20 +9,22 @@ module.exports = (on, config) => {
     case 'staging': {
       config.baseUrl = 'https://ui-default.scp-staging.biomage.net';
       config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
+      config.env.userPoolId = 'eu-west-1_sVQL15Yxu';
       break;
     }
 
     case 'production': {
       config.baseUrl = 'https://scp.biomage.net';
       config.env.loginUrl = 'biomage.auth.eu-west-1.amazoncognito.com';
+      config.env.userPoolId = 'eu-west-1_ZmmBYI6jO';
+
       break;
     }
 
     default: {
-      throw new Error('K8S_ENV must be set to ehtier \'development\', \'staging\', or \'production\'');
+      throw new Error('K8S_ENV must be set to either \'development\', \'staging\', or \'production\'');
     }
   }
-
   // if (!process.env.E2E_LOGIN_USER) {
   //   throw new Error('LOGIN_USER must be a valid username for log into the platform.');
   // }

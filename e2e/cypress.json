@@ -1,3 +1,9 @@
 {
-    "chromeWebSecurity": false
+    "chromeWebSecurity": false,
+    "env":{
+        "username": "stefan@biomage.net", 
+        "password": "Fu2.QAG}", 
+        "userPoolId": "eu-west-1_ZmmBYI6jO", 
+        "clientId": "129t3ghq965u46j8pk3seundi2"
+    }   
 }
