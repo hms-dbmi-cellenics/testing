@@ -1,0 +1,13 @@
+ci-policies:
+  - PolicyName: "can-read-cognito"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "cognito-identity:ListIdentityPools"
+            - "cognito-idp:ListUserPools"
+            - "cognito-idp:ListUserPoolClients"
+            - "cognito-idp:DescribeUserPool"
+            - "cognito-idp:DescribeUserPoolClient"
+          Resource: '*'
