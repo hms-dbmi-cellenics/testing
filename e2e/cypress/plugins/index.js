@@ -65,11 +65,11 @@ module.exports = async (on, config) => {
     }
   }
   if (!config.env.E2E_USERNAME) {
-    throw new Error('E2E_USERNAME must be a valid username for log into the platform.');
+    throw new Error('CYPRESS_E2E_USERNAME must be a valid username for log into the platform.');
   }
 
   if (!config.env.E2E_PASSWORD) {
-    throw new Error('E2E_PASSSWORD must be a valid username for logging into the platform.');
+    throw new Error('CYPRESS_E2E_PASSSWORD must be a valid username for logging into the platform.');
   }
 
   return config;
