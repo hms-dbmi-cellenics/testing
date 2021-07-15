@@ -15,8 +15,10 @@ first install all required dependencies:
   npm install
 
 ### Local development
-
-To develop tests locally, you first need to open the VS Code workspace:
+You need to set two environment variables for authentication:
+  CYPRESS_E2E_USERNAME - your email for logging in the platform
+  CYPRESS_E2E_PASSWORD - your password for logging in the platform
+Open the VS Code workspace:
 
   code e2e.code-workspace
 
