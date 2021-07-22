@@ -31,6 +31,9 @@ jobs:
         run: |-
           cd e2e/
           K8S_ENV=${{ github.event.inputs.environment || 'production' }} npm start
+        env:
+          CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
+          CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
 
       - id: send-to-slack
         name: Send failure notification to Slack
