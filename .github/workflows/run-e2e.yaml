@@ -23,7 +23,7 @@ jobs:
         name: Check out Biomage utils
         uses: actions/checkout@v2
         with:
-          repository: 'biomage/biomage-utils'
+          repository: 'biomage-ltd/biomage-utils'
           path: 'biomage-utils'
 
       - id: setup-biomage-utils
