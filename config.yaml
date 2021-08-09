@@ -1,0 +1,8 @@
+---
+# Experiment IDS to test
+experiment-ids:
+- "2093e95fd17372fb558b81b9142f230e" # PBMC 10k
+# - "2093e95fd17372fb558b81b9142f230e" # Multisample murine
+# - "b965ebf6100bd62d25d13585059e3c04" # 8 samples dataset
+# - "7ce28fd05dd3eb2b8627edaebafd9c0a" # 4 samples dataset
+# - "92e31caba807dbdaa4c3549a2e74da65" # 400k cells dataset

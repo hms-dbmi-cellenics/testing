@@ -19,6 +19,20 @@ jobs:
         name: Check out source code
         uses: actions/checkout@v2
 
+      - id: checkout-biomage-utils
+        name: Check out Biomage utils
+        uses: actions/checkout@v2
+        with:
+          repository: 'biomage/biomage-utils'
+          path: 'biomage-utils'
+
+      - id: setup-biomage-utils
+        name: Setup Biomage utils
+        run: |-
+          cd biomage-utils/
+          make install
+          make test
+
       - id: setup-aws
         name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -26,6 +40,24 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+
+      - id: install-yq-jq
+        name: Install yq and jq to parse config file
+        run: |-
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64
+          sudo add-apt-repository ppa:rmescandon/yq
+          sudo apt update
+          sudo apt install yq -y
+          sudo apt-get install jq -y
+
+      - id: copy-experiments
+        name: Copy experiments
+        run: |-
+          cd biomage-utils/
+          for EXP_ID in $(yq e '.experiment-ids' ../config.yaml -j | jq '.[]')
+          do
+            biomage experiment copy -e $EXP_ID
+          done
 
       - id: install
         name: Install dependencies
