@@ -28,6 +28,7 @@ jobs:
           path: 'biomage-utils'
 
       - id: setup-biomage-utils
+        if: github.event.inputs.environment == 'staging'
         name: Setup Biomage utils
         run: |-
           cd biomage-utils/
