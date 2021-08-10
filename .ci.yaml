@@ -35,7 +35,7 @@ ci-policies:
           Resource:
             - "arn:aws:s3:::biomage-source-production/*"
             - "arn:aws:s3:::biomage-originals-production/*"
-            - "arn:aws:s3:::worker-results-production/*"
+            - "arn:aws:s3:::cell-sets-production/*"
             - "arn:aws:s3:::processed-matrix-production/*"
   - PolicyName: "can-list-objects-in-staging-buckets"
     PolicyDocument:
@@ -59,7 +59,7 @@ ci-policies:
           Resource:
             - "arn:aws:s3:::biomage-source-staging/*"
             - "arn:aws:s3:::biomage-originals-staging/*"
-            - "arn:aws:s3:::worker-results-staging/*"
+            - "arn:aws:s3:::cell-sets-staging/*"
             - "arn:aws:s3:::processed-matrix-staging/*"
   - PolicyName: "can-read-records-in-production-tables"
     PolicyDocument:
