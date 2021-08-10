@@ -11,3 +11,78 @@ ci-policies:
             - "cognito-idp:DescribeUserPool"
             - "cognito-idp:DescribeUserPoolClient"
           Resource: '*'
+
+  # Permissions to run biomage-utils in CI
+  - PolicyName: "can-list-objects-in-prodution-buckets"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "s3:ListBucket"
+          Resource:
+            - "arn:aws:s3:::biomage-source-production"
+            - "arn:aws:s3:::biomage-originals-production"
+            - "arn:aws:s3:::cell-sets-production"
+            - "arn:aws:s3:::processed-matrix-production"
+  - PolicyName: "can-get-objects-in-prodution-buckets"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "s3:GetObject"
+          Resource:
+            - "arn:aws:s3:::biomage-source-production/*"
+            - "arn:aws:s3:::biomage-originals-production/*"
+            - "arn:aws:s3:::worker-results-production/*"
+            - "arn:aws:s3:::processed-matrix-production/*"
+  - PolicyName: "can-list-objects-in-staging-buckets"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "s3:ListBucket"
+          Resource:
+            - "arn:aws:s3:::biomage-source-staging"
+            - "arn:aws:s3:::biomage-originals-staging"
+            - "arn:aws:s3:::cell-sets-staging"
+            - "arn:aws:s3:::processed-matrix-staging"
+  - PolicyName: "can-put-objects-into-staging-buckets"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "s3:PutObject"
+          Resource:
+            - "arn:aws:s3:::biomage-source-staging/*"
+            - "arn:aws:s3:::biomage-originals-staging/*"
+            - "arn:aws:s3:::worker-results-staging/*"
+            - "arn:aws:s3:::processed-matrix-staging/*"
+  - PolicyName: "can-read-records-in-production-tables"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "dynamodb:Query"
+            - "dynamodb:GetItem"
+          Resource:
+            - "arn:aws:dynamodb:eu-west-1:242905224710:table/projects-production"
+            - "arn:aws:dynamodb:eu-west-1:242905224710:table/experiments-production"
+            - "arn:aws:dynamodb:eu-west-1:242905224710:table/samples-production"
+  - PolicyName: "can-put-records-into-staging-tables"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "dynamodb:BatchWriteItem"
+            - "dynamodb:PutItem"
+            - "dynamodb:UpdateItem"
+          Resource:
+            - "arn:aws:dynamodb:eu-west-1:242905224710:table/projects-staging"
+            - "arn:aws:dynamodb:eu-west-1:242905224710:table/experiments-staging"
+            - "arn:aws:dynamodb:eu-west-1:242905224710:table/samples-staging"
