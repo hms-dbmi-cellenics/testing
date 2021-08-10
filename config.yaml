@@ -1,8 +1,8 @@
 ---
-# Experiment IDS to test
+# Experiment IDS to copy from production to staging to be tested
 experiment-ids:
 - "2093e95fd17372fb558b81b9142f230e" # PBMC 10k
-# - "2093e95fd17372fb558b81b9142f230e" # Multisample murine
-# - "b965ebf6100bd62d25d13585059e3c04" # 8 samples dataset
-# - "7ce28fd05dd3eb2b8627edaebafd9c0a" # 4 samples dataset
-# - "92e31caba807dbdaa4c3549a2e74da65" # 400k cells dataset
+- "06e7f90e7ea19eb773bfc95ef87fcc9e" # Multisample murine
+- "deb7b03bbfc0c96b448a1d4f595f75fe" # 8 samples dataset
+- "f6e0613002157d3855ebf616f43c52bd" # 4 samples dataset
+- "68f87b9cb1955602e825b4d40bcbb032" # Very big dataset
