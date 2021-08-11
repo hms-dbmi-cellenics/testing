@@ -28,8 +28,9 @@ module.exports = async (on, config) => {
 
   const { UserPools } = await userPoolClient.send(new ListUserPoolsCommand({ MaxResults: 60 }));
   // setting the user pool id
-  const environment = process.env.K8S_ENV || 'staging';
-  const userPoolId = UserPools.find((pool) => pool.Name.includes(environment)).Id;
+  const environment = process.env.K8S_ENV || 'development';
+  const cognitoEnv = environment === 'development' ? 'staging' : environment; // development env uses staging cognito pool
+  const userPoolId = UserPools.find((pool) => pool.Name.includes(cognitoEnv)).Id;
   config.env.userPoolId = userPoolId;
 
   // setting the client id
@@ -43,7 +44,7 @@ module.exports = async (on, config) => {
 
   switch (process.env.K8S_ENV) {
     case 'development': {
-      config.baseUrl = 'https://localhost:3000';
+      config.baseUrl = 'http://localhost:5000';
       config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
       break;
     }
