@@ -63,7 +63,7 @@ jobs:
             biomage experiment copy -e $(echo $EXP_ID | sed s'/"//g')
           done
         env:
-          BIOMAGE_EMAIL: ${{ secrets.BIOMAGE_EMAIL }}
+          BIOMAGE_EMAIL: ${{ secrets.CYPRESS_E2E_USERNAME }}
 
       - id: install
         name: Install dependencies
