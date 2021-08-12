@@ -60,7 +60,7 @@ jobs:
           cd biomage-utils/
           for EXP_ID in $(yq e '.experiment-ids' ../config.yaml -j | jq '.[]')
           do
-            biomage experiment copy -e $EXP_ID
+            biomage experiment copy -e $(echo $EXP_ID | sed s'/"//g')
           done
 
       - id: install
