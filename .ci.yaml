@@ -70,7 +70,7 @@ ci-policies:
             - "dynamodb:Query"
             - "dynamodb:GetItem"
           Resource:
-            - "arn:aws:dynamodb:${AWS::AccountId}:table/projects-production"
+            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/projects-production"
             - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/experiments-production"
             - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/samples-production"
   - PolicyName: "can-put-records-into-staging-tables"
