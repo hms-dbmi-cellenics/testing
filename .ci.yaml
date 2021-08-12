@@ -70,9 +70,9 @@ ci-policies:
             - "dynamodb:Query"
             - "dynamodb:GetItem"
           Resource:
-            - "arn:aws:dynamodb:eu-west-1:242905224710:table/projects-production"
-            - "arn:aws:dynamodb:eu-west-1:242905224710:table/experiments-production"
-            - "arn:aws:dynamodb:eu-west-1:242905224710:table/samples-production"
+            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/projects-production"
+            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/experiments-production"
+            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/samples-production"
   - PolicyName: "can-put-records-into-staging-tables"
     PolicyDocument:
       Version: "2012-10-17"
@@ -83,6 +83,6 @@ ci-policies:
             - "dynamodb:PutItem"
             - "dynamodb:UpdateItem"
           Resource:
-            - "arn:aws:dynamodb:eu-west-1:242905224710:table/projects-staging"
-            - "arn:aws:dynamodb:eu-west-1:242905224710:table/experiments-staging"
-            - "arn:aws:dynamodb:eu-west-1:242905224710:table/samples-staging"
+            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/projects-staging"
+            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/experiments-staging"
+            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/samples-staging"

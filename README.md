@@ -39,3 +39,7 @@ each environment.
 
 A nightly test on the production environment only is also run
 at midnight every day automatically.
+
+### Running in staging
+
+Experiments from production are copied to staging to carry out integration tests on staging. These experiments are defined in `config.yaml`. These experiments have to be uploaded and run properly before they can be copied.
