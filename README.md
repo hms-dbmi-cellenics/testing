@@ -18,11 +18,10 @@ npm install
 
 ### Local development
 You need to set two environment variables for authentication:
+
 * `CYPRESS_E2E_USERNAME` - your email for logging in the platform
 * `CYPRESS_E2E_PASSWORD` - your password for logging in the platform
-Open the VS Code workspace:
 
-`code e2e.code-workspace`
 
 Then you can run the GUI of the test runner:
 

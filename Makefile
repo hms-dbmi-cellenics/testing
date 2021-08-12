@@ -21,9 +21,21 @@ install: clean ## Creates venv, and adds biomage as system command
 	@echo "    [✓]"
 	@echo
 
-test: ## Tests that biomage cmd & subcommand are available
+test:
 	@echo "==> Running tests on development environment..."
-	K8S_ENV=development npm run dev
+	cd e2e && K8S_ENV=development npm run dev
+	@echo "    [✓]"
+	@echo
+
+test-staging:
+	@echo "==> Running tests on development environment..."
+	cd e2e && K8S_ENV=staging npm run dev
+	@echo "    [✓]"
+	@echo
+
+test-production:
+	@echo "==> Running tests on development environment..."
+	cd e2e && K8S_ENV=production npm run dev
 	@echo "    [✓]"
 	@echo
 
