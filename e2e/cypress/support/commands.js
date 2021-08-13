@@ -83,7 +83,7 @@ Cypress.Commands.add('deleteProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.contains('tr', projectName).get('.anticon-delete').click();
+  cy.contains('.project-card', projectName).find('.anticon-delete').click();
   log.snapshot('opened-delete-modal');
 
   cy.get('.delete-project-modal').find('input').type(projectName);
