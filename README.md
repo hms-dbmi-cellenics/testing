@@ -11,22 +11,23 @@ a simple Cypress smoke test suite to test basic UI functionality.
 Cypress can automatically run a basic smoke test on the UI. To do this, you must
 first install all required dependencies:
 
-  cd e2e/
-  npm install
+```
+cd e2e/
+npm install
+```
 
 ### Local development
 You need to set two environment variables for authentication:
-  CYPRESS_E2E_USERNAME - your email for logging in the platform
-  CYPRESS_E2E_PASSWORD - your password for logging in the platform
-Open the VS Code workspace:
 
-  code e2e.code-workspace
+* `CYPRESS_E2E_USERNAME` - your email for logging in the platform
+* `CYPRESS_E2E_PASSWORD` - your password for logging in the platform
+
 
 Then you can run the GUI of the test runner:
 
-  K8S_ENV=production npm run dev
+`make test`
 
-The Cypress application should open and you can select which tests to run.
+The Cypress application should open and you can select which tests to run. By default cypress runs the tests locally so you need to run the develop environment.
 Any updates to the test file causes the test to reload, providing you with
 a hot-reload functionality to iteratively improve your tests.
 
