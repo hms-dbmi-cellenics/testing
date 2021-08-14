@@ -58,3 +58,60 @@ Cypress.Commands.add('login', () => {
     log.end();
   });
 });
+
+Cypress.Commands.add('createProject', (projectName, projectDescription) => {
+  const log = Cypress.log({
+    displayName: 'Creating Project',
+    message: [`🔐 Creating project named ${projectName}`],
+    autoEnd: false,
+  });
+
+  log.snapshot('open-modal');
+  cy.get('#create-new-project-modal').click({ force: true });
+  log.snapshot('type-name');
+  cy.get('#project-name').type(projectName);
+  log.snapshot('type-description');
+  cy.get('#project-description').type(projectDescription);
+  cy.get('#confirm-create-new-project').click();
+  log.end();
+});
+
+Cypress.Commands.add('deleteProject', (projectName) => {
+  const log = Cypress.log({
+    displayName: 'Deleting Project',
+    message: [`🔐 Deleting project named ${projectName}`],
+    autoEnd: false,
+  });
+
+  cy.contains('tr', projectName).get('.anticon-delete').click();
+  log.snapshot('opened-delete-modal');
+
+  cy.get('.delete-project-modal').find('input').type(projectName);
+  cy.contains('Permanently delete project').click();
+  log.end();
+});
+
+Cypress.Commands.add('chooseProject', (projectName) => {
+  const log = Cypress.log({
+    displayName: 'Choosing Project',
+    message: [`Choosing project ${projectName}`],
+    autoEnd: false,
+  });
+
+  log.snapshot('choose-project');
+  cy.get('.project-card').first().click();
+});
+
+Cypress.Commands.add('launchAnalysis', () => {
+  const log = Cypress.log({
+    displayName: 'Launching analysis',
+    message: ['launch analysis'],
+    autoEnd: false,
+  });
+
+  log.snapshot('launch-analysis');
+  cy.get('#launch-analysis-button').click();
+
+  log.snapshot('launch-first-experiment');
+  cy.get('.launch-experiment-option').first().get('.launch-experiment-button').click();
+});
