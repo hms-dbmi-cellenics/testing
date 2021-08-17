@@ -60,8 +60,10 @@ jobs:
           cd biomage-utils/
           for EXP_ID in $(yq e '.experiment-ids' ../config.yaml -j | jq '.[]')
           do
-            biomage experiment copy -e $EXP_ID
+            biomage experiment copy -e $(echo $EXP_ID | sed s'/"//g')
           done
+        env:
+          BIOMAGE_EMAIL: ${{ secrets.CYPRESS_E2E_USERNAME }}
 
       - id: install
         name: Install dependencies
