@@ -94,12 +94,18 @@ Cypress.Commands.add('deleteProject', (projectName) => {
 Cypress.Commands.add('chooseProject', (projectName) => {
   const log = Cypress.log({
     displayName: 'Choosing Project',
-    message: [`Choosing project ${projectName}`],
+    message: ['Choosing project'],
     autoEnd: false,
   });
 
   log.snapshot('choose-project');
-  cy.get('.project-card').first().click();
+  // If no project name is given, choose the first project
+  if (projectName) {
+    cy.contains('.project-card', projectName).click();
+  } else {
+    cy.get('.project-card').first().click();
+  }
+  log.end();
 });
 
 Cypress.Commands.add('launchAnalysis', () => {
@@ -110,8 +116,9 @@ Cypress.Commands.add('launchAnalysis', () => {
   });
 
   log.snapshot('launch-analysis');
-  cy.get('#launch-analysis-button').click();
+  cy.contains('button', 'Launch analysis').click();
 
   log.snapshot('launch-first-experiment');
-  cy.get('.launch-experiment-option').first().get('.launch-experiment-button').click();
+  cy.contains('button', /^Launch$/).first().click();
+  log.end();
 });

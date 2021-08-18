@@ -3,7 +3,6 @@ import '../../support/commands';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
 
-const waitForLaunch = 10000;
 const gem2sTimeOut = (60 * 1000) * 30; // 30 minutes;
 
 describe('Launches analysis successfully', () => {
@@ -12,6 +11,14 @@ describe('Launches analysis successfully', () => {
   //   2. Log in into biomage
   //   3. Visit data-management
   beforeEach(() => {
+    // Intercept GET calls to */backendStatus/* endpoint
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '*backendStatus*',
+      },
+    ).as('getBackendStatus');
+
     cy.login();
     cy.visit('/data-management');
   });
@@ -24,28 +31,13 @@ describe('Launches analysis successfully', () => {
     return true;
   });
 
-  it('launches analysis and skips gem2s on already ran sample', () => {
+  it('launches analysis', () => {
     cy.chooseProject();
+
+    cy.wait('@getBackendStatus');
     cy.launchAnalysis();
 
-    // Check that GEM2S runs
-    cy.get('.gem2s-status-result', { timeout: waitForLaunch }).should('not.exist');
-
     // Waiting for data-processing to show up
-    cy.get('.data-processing-header', { timeout: gem2sTimeOut }).should('exist');
-  });
-
-  it('launches analysis and runs gem2s on new sample', () => {
-    cy.createProject();
-    cy.chooseProject();
-
-    cy.chooseProject();
-    cy.launchAnalysis();
-
-    // Check that GEM2S runs
-    cy.get('.gem2s-status-result', { timeout: 10000 }).should('exist');
-
-    // Waiting for data-processing to show up
-    cy.get('.data-processing-header', { timeout: gem2sTimeOut }).should('exist');
+    cy.contains('div > span', 'Data Processing', { timeout: gem2sTimeOut }).should('exist');
   });
 });
