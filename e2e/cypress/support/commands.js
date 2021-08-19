@@ -110,7 +110,7 @@ Cypress.Commands.add('addMetadata', () => {
     autoEnd: false,
   });
 
-  cy.get('#add-metadata-button').click();
+  cy.contains('button', 'Add metadata').click();
 
   log.snapshot('opened-add-metadata-popover');
 
