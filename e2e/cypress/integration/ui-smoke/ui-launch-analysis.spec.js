@@ -40,8 +40,7 @@ describe('Launches analysis successfully', () => {
   });
 
   it('launches analysis', () => {
-    cy.wait('@getProjects').then((el) => {
-      const { response } = el;
+    cy.wait('@getProjects').then(({ response }) => {
       const projectNames = response.body.map((project) => project.name);
 
       projectNames.forEach((projectName) => {
