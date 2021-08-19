@@ -11,13 +11,21 @@ describe('Launches analysis successfully', () => {
   //   2. Log in into biomage
   //   3. Visit data-management
   beforeEach(() => {
-    // Intercept GET calls to */backendStatus/* endpoint
+    // Intercept GET calls to */projects/* endpoint
     cy.intercept(
       {
         method: 'GET',
-        url: '*backendStatus*',
+        url: '**/projects',
       },
-    ).as('getBackendStatus');
+    ).as('getProjects');
+
+    // Intercept GET calls to */experiments/* endpoint
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '**/experiments',
+      },
+    ).as('getExperiment');
 
     cy.login();
     cy.visit('/data-management');
@@ -32,12 +40,23 @@ describe('Launches analysis successfully', () => {
   });
 
   it('launches analysis', () => {
-    cy.chooseProject();
+    cy.wait('@getProjects').then((el) => {
+      const { response } = el;
+      const projectNames = response.body.map((project) => project.name);
 
-    cy.wait('@getBackendStatus');
-    cy.launchAnalysis();
+      projectNames.forEach((projectName) => {
+        cy.selectProject(projectName);
 
-    // Waiting for data-processing to show up
-    cy.contains('div > span', 'Data Processing', { timeout: gem2sTimeOut }).should('exist');
+        cy.wait('@getExperiment');
+
+        cy.launchAnalysis();
+
+        // Waiting for data-processing to show up
+        cy.contains('div > span', 'Data Processing', { timeout: gem2sTimeOut }).should('exist');
+
+        // Go back to Data Management to launch other analyses
+        cy.navigateTo('Data Management');
+      });
+    });
   });
 });
