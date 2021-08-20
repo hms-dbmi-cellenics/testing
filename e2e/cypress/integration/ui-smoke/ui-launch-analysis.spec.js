@@ -4,6 +4,7 @@ import '../../support/commands';
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
 
 const gem2sTimeOut = (60 * 1000) * 30; // 30 minutes;
+const qcTimeOut = (60 * 1000) * 30; // 30 minutes;
 
 describe('Launches analysis successfully', () => {
   // before each test:
@@ -53,8 +54,8 @@ describe('Launches analysis successfully', () => {
         // Waiting for data-processing to show up
         cy.contains('div > span', 'Data Processing', { timeout: gem2sTimeOut }).should('exist');
 
-        // Go back to Data Management to launch other analyses
-        cy.navigateTo('Data Management');
+        // Wait for QC to finish and then go back to Data Management to launch other analysis
+        cy.navigateTo('Data Management', { timeout: qcTimeOut });
       });
     });
   });

@@ -118,7 +118,7 @@ Cypress.Commands.add('launchAnalysis', () => {
   log.end();
 });
 
-Cypress.Commands.add('navigateTo', (page) => {
+Cypress.Commands.add('navigateTo', (page, config) => {
   const log = Cypress.log({
     displayName: `Navigate using to ${page}`,
     message: [`navigate to ${page}`],
@@ -126,6 +126,6 @@ Cypress.Commands.add('navigateTo', (page) => {
   });
 
   log.snapshot('navigate');
-  cy.get('aside').contains('a', page).click();
+  cy.get('aside').contains('a', page).click(config);
   log.end();
 });
