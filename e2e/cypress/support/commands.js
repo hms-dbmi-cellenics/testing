@@ -134,7 +134,7 @@ Cypress.Commands.add('navigateTo', (page, config = {}) => {
 Cypress.Commands.add('listenOnWebsocket', (fn) => {
   const webSocketUrl = Cypress.env('webSocketUrl');
 
-  const log = Cypress.log({
+  Cypress.log({
     displayName: 'Connect to websocket',
     message: `Connect to websocket on ${webSocketUrl}`,
   });
@@ -145,36 +145,40 @@ Cypress.Commands.add('listenOnWebsocket', (fn) => {
   fn(io);
 });
 
-Cypress.Commands.add('runGem2s', (experimentId, config = {}) => {
+Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
   Cypress.log({
     displayName: 'GEM2S',
-    message: 'Listening for GEM2S responses',
+    message: 'Waiting for GEM2S to complete',
   });
 
-  const numGem2sSteps = 6;
-  const gem2sStepTimeOut = (60 * 1000) * 5; // 30 minutes;
+  const numGem2sSteps = 7;
+  const gem2sStepTimeOut = (60 * 1000) * 5; // 5 minutes;
 
   cy.listenOnWebsocket((socket) => {
-    const gem2sResults = [];
+    const gem2sResponses = [];
 
     socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
-      gem2sResults.push(update);
+      gem2sResponses.push(update);
     });
 
-    // Create array [0, 1, 2, ... 5]
+    // Create array [0, 1, 2, ... numGem2sSteps]
     const waitForNSteps = [...Array(numGem2sSteps).keys()];
 
     waitForNSteps.forEach((step) => {
-      cy.waitUntil(() => gem2sResults[step] !== undefined,
+      cy.waitUntil(() => gem2sResponses[step] !== undefined,
         {
           timeout: gem2sStepTimeOut,
           interval: 2000,
           ...config,
         }).then(() => {
-        const message = gem2sResults[step];
+        const message = gem2sResponses[step];
 
         cy.log('Expecting step to complete and error to be undefined');
-        expect(message.response?.error).to.be.undefined;
+
+        // GEM2S steps aren't returning "response" property in the websocket
+        // Return right now, so we can check for the absence of this field to
+        // Check if it's error or not.
+        expect(message.response.error).to.equal(false);
 
         const log = Cypress.log({
           displayName: 'GEM2S',
@@ -187,3 +191,50 @@ Cypress.Commands.add('runGem2s', (experimentId, config = {}) => {
     });
   });
 });
+
+// Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
+//   Cypress.log({
+//     displayName: 'QC',
+//     message: 'Waiting for QC to complete',
+//   });
+
+//   const numQcSteps = 7;
+//   const QCStepTimeOut = (60 * 1000) * 5; // 5 minutes;
+
+//   cy.listenOnWebsocket((socket) => {
+//     const QCResponses = [];
+
+//     socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
+//       QCResponses.push(update);
+//     });
+
+//     // Create array [0, 1, 2, ... numQcSteps]
+//     const waitForNSteps = [...Array(numQcSteps).keys()];
+
+//     waitForNSteps.forEach((step) => {
+//       cy.waitUntil(() => QCResponses[step] !== undefined,
+//         {
+//           timeout: QCStepTimeOut,
+//           interval: 2000,
+//           ...config,
+//         }).then(() => {
+//         const message = QCResponses[step];
+
+//         console.log(`== QC step ${step + 1}`);
+//         console.log(message);
+
+//         cy.log('Expecting step to complete and error to be undefined');
+//         // eslint-disable-next-line no-unused-expressions
+//         expect(message.response.error).to.equal(false);
+
+//         const log = Cypress.log({
+//           displayName: 'QC',
+//           message: `QC ${step + 1} completed`,
+//           autoEnd: false,
+//         });
+//         log.snapshot(`qc-step-${step + 1}`);
+//         log.end();
+//       });
+//     });
+//   });
+// });

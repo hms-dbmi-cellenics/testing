@@ -54,13 +54,14 @@ describe('Launches analysis successfully', () => {
 
         // Listen on websocket to get back GEM2S result
         const experimentId = project.experiments[0];
-        cy.runGem2s(experimentId);
+        cy.waitForGem2s(experimentId);
 
         // Waiting for data-processing to show up
         cy.contains('div > span', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
 
         // Wait for QC to finish and then go back to Data Management to launch other analysis
-        cy.navigateTo('Data Management', { timeout: qcTimeOut });
+        // cy.waitForQc(experimentId);
+        cy.navigateTo('Data Management');
       });
     });
   });

@@ -45,7 +45,7 @@ module.exports = async (on, config) => {
   switch (process.env.K8S_ENV) {
     case 'development': {
       config.baseUrl = 'http://localhost:5000';
-      config.env.webSocketUrl = 'http://localhost:5000';
+      config.env.webSocketUrl = 'http://localhost:3000';
       config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
       break;
     }
