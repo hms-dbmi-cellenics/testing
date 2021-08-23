@@ -7,17 +7,40 @@ on:
         description: 'The environment to run the tests on (staging, production)'
         required: false
         default: 'production'
+      ref:
+        description: 'The ref to the code to be run. Can be any git ref like a branch name, tag, or commit. (default: latest tag for production tests, and master for staging).'
+        required: false
+        default: 'latest_tag'
   schedule:
     - cron:  '22 2 * * *'
 
 jobs:
   run-e2e:
-    name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment || 'production') }}
+    name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment) }}
     runs-on: ubuntu-20.04
     steps:
       - id: checkout
         name: Check out source code
         uses: actions/checkout@v2
+
+      - id: checkout-correct-ref
+        name: Check out the correct test code ref
+        run: |-
+          # if we are in production check out the latest tag for the nightly build
+          # if we are in staging and we have no ref (default value) just use master (no need to checkout anything)
+          if [ "$REF" = "latest_tag" && "$ENV" == "production" ]; then
+            latesttag=$(git describe --tags)
+            echo "Checking out ${latesttag}"
+            git checkout ${latesttag}
+          fi
+          # if any ref was provided check it out
+          if [ "$REF" != "latest_tag" ]; then
+            echo "Checking out $REF"
+            git checkout $REF
+          fi
+        env:
+          REF: ${{ github.event.inputs.ref }}
+          ENV: ${{ github.event.inputs.environment }}
 
       - id: checkout-biomage-utils
         if: github.event.inputs.environment == 'staging'
