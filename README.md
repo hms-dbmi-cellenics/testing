@@ -40,8 +40,8 @@ each environment.
 
 A nightly test on the production environment only is also run
 at midnight every day automatically. This nightly build uses the latest
-tag on the master branch. If your changes do not depend on
-any repo's release you should create a new tag after merging.
+tag on the master branch.  If your changes do not depend on any changes in another repo,
+you should create a new tag after merging.
 
 ### Running in staging
 
