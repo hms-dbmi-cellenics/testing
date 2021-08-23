@@ -1,7 +1,6 @@
 import { Auth } from 'aws-amplify';
 import 'cypress-localstorage-commands';
 import 'cypress-wait-until';
-import 'cypress-promise/register';
 import socketIOClient from 'socket.io-client';
 
 Cypress.Commands.add('login', () => {
@@ -121,29 +120,70 @@ Cypress.Commands.add('launchAnalysis', () => {
   log.end();
 });
 
-Cypress.Commands.add('listenOnWebsocket', (fn) => {
-  const log = Cypress.log({
-    displayName: 'Connect to websocket',
-    message: ['Connect to websocket'],
-    autoEnd: false,
-  });
-
-  log.snapshot('connecting-to-web-socket');
-  const io = socketIOClient(Cypress.env('webSocketUrl'), { transports: ['websocket'] });
-  log.end();
-
-  // Callbacks will have scope to io objects
-  fn(io);
-});
-
-Cypress.Commands.add('navigateTo', (page, config) => {
+Cypress.Commands.add('navigateTo', (page, config = {}) => {
   const log = Cypress.log({
     displayName: `Navigate using to ${page}`,
     message: [`navigate to ${page}`],
     autoEnd: false,
   });
 
-  log.snapshot('navigate');
   cy.get('aside').contains('a', page).click(config);
   log.end();
+});
+
+Cypress.Commands.add('listenOnWebsocket', (fn) => {
+  const webSocketUrl = Cypress.env('webSocketUrl');
+
+  const log = Cypress.log({
+    displayName: 'Connect to websocket',
+    message: `Connect to websocket on ${webSocketUrl}`,
+  });
+
+  const io = socketIOClient(webSocketUrl, { transports: ['websocket'] });
+
+  // Callbacks will have scope to io object
+  fn(io);
+});
+
+Cypress.Commands.add('runGem2s', (experimentId, config = {}) => {
+  Cypress.log({
+    displayName: 'GEM2S',
+    message: 'Listening for GEM2S responses',
+  });
+
+  const numGem2sSteps = 6;
+  const gem2sStepTimeOut = (60 * 1000) * 5; // 30 minutes;
+
+  cy.listenOnWebsocket((socket) => {
+    const gem2sResults = [];
+
+    socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
+      gem2sResults.push(update);
+    });
+
+    // Create array [0, 1, 2, ... 5]
+    const waitForNSteps = [...Array(numGem2sSteps).keys()];
+
+    waitForNSteps.forEach((step) => {
+      cy.waitUntil(() => gem2sResults[step] !== undefined,
+        {
+          timeout: gem2sStepTimeOut,
+          interval: 2000,
+          ...config,
+        }).then(() => {
+        const message = gem2sResults[step];
+
+        cy.log('Expecting step to complete and error to be undefined');
+        expect(message.response?.error).to.be.undefined;
+
+        const log = Cypress.log({
+          displayName: 'GEM2S',
+          message: `GEM2S step ${step + 1} completed`,
+          autoEnd: false,
+        });
+        log.snapshot(`gem2s-step-${step + 1}`);
+        log.end();
+      });
+    });
+  });
 });

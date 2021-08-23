@@ -53,25 +53,8 @@ describe('Launches analysis successfully', () => {
         cy.launchAnalysis();
 
         // Listen on websocket to get back GEM2S result
-        cy.listenOnWebsocket((socket) => {
-          const gem2sResults = [];
-          const experimentId = project.experiments[0];
-
-          socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
-            gem2sResults.push(update);
-          });
-
-          for (let i = 0; i < numGem2sSteps; i += 1) {
-            // Step 1
-            cy.waitUntil(() => gem2sResults[i]?.type === 'gem2s',
-              {
-                timeout: gem2sStepTimeOut,
-                interval: 2000,
-              });
-
-            cy.log(`GEM2S step ${i + 1} completed`);
-          }
-        });
+        const experimentId = project.experiments[0];
+        cy.runGem2s(experimentId);
 
         // Waiting for data-processing to show up
         cy.contains('div > span', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
