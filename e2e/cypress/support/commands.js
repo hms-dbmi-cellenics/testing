@@ -98,7 +98,7 @@ Cypress.Commands.add('selectProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.get(`[data-test-id="${projectName}"]`).click();
+  cy.get(`[data-test-id="project-card-${projectName}"]`).click();
 
   log.end();
 });
