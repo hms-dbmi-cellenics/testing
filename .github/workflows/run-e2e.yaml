@@ -8,9 +8,10 @@ on:
         required: false
         default: 'production'
       ref:
-        description: 'The ref to the code to be run. Can be any git ref like a branch name, tag, or commit. (default: latest tag for production tests, and master for staging).'
+        description: 'By default the script runs the latest tag when the environment is production, and latest branch commit otherwise.
+         Set this variable to override that behavior and run a specific ref regardless of the environment.'
         required: false
-        default: 'latest_tag'
+        default: ''
   schedule:
     - cron:  '22 2 * * *'
 
@@ -22,19 +23,20 @@ jobs:
       - id: checkout
         name: Check out source code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - id: checkout-correct-ref
         name: Check out the correct test code ref
         run: |-
           # if we are in production check out the latest tag for the nightly build
-          # if we are in staging and we have no ref (default value) just use master (no need to checkout anything)
-          if [ "$REF" = "latest_tag" && "$ENV" == "production" ]; then
-            latesttag=$(git describe --tags)
+          if [ "$ENV" = "production" ] && [ "$REF" = "" ]; then
+            latesttag=$(git describe --tags --abbrev=0)
             echo "Checking out ${latesttag}"
             git checkout ${latesttag}
           fi
-          # if any ref was provided check it out
-          if [ "$REF" != "latest_tag" ]; then
+          # # if any ref was provided check it out
+          if [ "$REF" != "" ]; then
             echo "Checking out $REF"
             git checkout $REF
           fi
