@@ -1,5 +1,8 @@
 import { Auth } from 'aws-amplify';
 import 'cypress-localstorage-commands';
+import 'cypress-wait-until';
+import 'cypress-promise/register';
+import socketIOClient from 'socket.io-client';
 
 Cypress.Commands.add('login', () => {
   const username = Cypress.env('E2E_USERNAME'); // you should set the CYPRESS_E2E_USERNAME env variable
@@ -116,6 +119,21 @@ Cypress.Commands.add('launchAnalysis', () => {
   log.snapshot('launch-first-experiment');
   cy.contains('button', /^Launch$/).first().click();
   log.end();
+});
+
+Cypress.Commands.add('listenOnWebsocket', (fn) => {
+  const log = Cypress.log({
+    displayName: 'Connect to websocket',
+    message: ['Connect to websocket'],
+    autoEnd: false,
+  });
+
+  log.snapshot('connecting-to-web-socket');
+  const io = socketIOClient(Cypress.env('webSocketUrl'), { transports: ['websocket'] });
+  log.end();
+
+  // Callbacks will have scope to io objects
+  fn(io);
 });
 
 Cypress.Commands.add('navigateTo', (page, config) => {
