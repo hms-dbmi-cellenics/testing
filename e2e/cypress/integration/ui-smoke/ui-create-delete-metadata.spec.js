@@ -38,7 +38,7 @@ describe('Adds metadata to a sample in a created project', () => {
   });
 
   it('creates a new metadata track', () => {
-    const projectName = 'cypressTestProject';
+    const projectName = 'IntTest - Add Metadata Project';
     const metadataKeysArray = ['Track_1'];
 
     cy.selectProject(projectName);
@@ -60,7 +60,7 @@ describe('Adds metadata to a sample in a created project', () => {
   });
 
   it('deletes an existing metadata track', () => {
-    const projectName = 'cypressTestProject';
+    const projectName = 'IntTest - Add Metadata Project';
     const emptyMetadataKeysArray = [];
 
     cy.selectProject(projectName);
