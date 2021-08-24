@@ -175,14 +175,12 @@ Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
 
         cy.log('Expecting step to complete and error to be undefined');
 
-        // GEM2S steps aren't returning "response" property in the websocket
-        // Return right now, so we can check for the absence of this field to
-        // Check if it's error or not.
-        expect(message.response.error).to.equal(false);
+        // GEM2S steps doesn't "response" property if it's not error
+        expect(message.response).to.equal(undefined);
 
         const log = Cypress.log({
           displayName: 'GEM2S',
-          message: `GEM2S step ${step + 1} completed`,
+          message: `GEM2S step ${step + 1} of ${numGem2sSteps} completed`,
           autoEnd: false,
         });
         log.snapshot(`gem2s-step-${step + 1}`);
@@ -191,50 +189,3 @@ Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
     });
   });
 });
-
-// Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
-//   Cypress.log({
-//     displayName: 'QC',
-//     message: 'Waiting for QC to complete',
-//   });
-
-//   const numQcSteps = 7;
-//   const QCStepTimeOut = (60 * 1000) * 5; // 5 minutes;
-
-//   cy.listenOnWebsocket((socket) => {
-//     const QCResponses = [];
-
-//     socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
-//       QCResponses.push(update);
-//     });
-
-//     // Create array [0, 1, 2, ... numQcSteps]
-//     const waitForNSteps = [...Array(numQcSteps).keys()];
-
-//     waitForNSteps.forEach((step) => {
-//       cy.waitUntil(() => QCResponses[step] !== undefined,
-//         {
-//           timeout: QCStepTimeOut,
-//           interval: 2000,
-//           ...config,
-//         }).then(() => {
-//         const message = QCResponses[step];
-
-//         console.log(`== QC step ${step + 1}`);
-//         console.log(message);
-
-//         cy.log('Expecting step to complete and error to be undefined');
-//         // eslint-disable-next-line no-unused-expressions
-//         expect(message.response.error).to.equal(false);
-
-//         const log = Cypress.log({
-//           displayName: 'QC',
-//           message: `QC ${step + 1} completed`,
-//           autoEnd: false,
-//         });
-//         log.snapshot(`qc-step-${step + 1}`);
-//         log.end();
-//       });
-//     });
-//   });
-// });

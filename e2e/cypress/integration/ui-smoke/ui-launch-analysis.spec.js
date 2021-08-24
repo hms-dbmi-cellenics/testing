@@ -60,8 +60,7 @@ describe('Launches analysis successfully', () => {
         cy.contains('div > span', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
 
         // Wait for QC to finish and then go back to Data Management to launch other analysis
-        // cy.waitForQc(experimentId);
-        cy.navigateTo('Data Management');
+        cy.navigateTo('Data Management', { timeout: qcTimeOut });
       });
     });
   });
