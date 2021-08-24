@@ -105,7 +105,7 @@ Cypress.Commands.add('selectProject', (projectName) => {
   log.end();
 });
 
-Cypress.Commands.add('launchAnalysis', () => {
+Cypress.Commands.add('launchAnalysis', (experimentId) => {
   const log = Cypress.log({
     displayName: 'Launching analysis',
     message: ['launch analysis'],
@@ -113,22 +113,21 @@ Cypress.Commands.add('launchAnalysis', () => {
   });
 
   log.snapshot('launch-analysis');
-  cy.contains('button', 'Launch analysis').click();
+  cy.get('[data-test-id="launch-analysis-button"]').click();
 
-  log.snapshot('launch-first-experiment');
-  cy.contains('button', /^Launch$/).first().click();
+  log.snapshot('launch-experiment');
+  cy.get(`[data-test-id="launch-analysis-${experimentId}"]`).first().click();
   log.end();
 });
 
+/** Valid values are text in the links in the navigation menu */
 Cypress.Commands.add('navigateTo', (page, config = {}) => {
-  const log = Cypress.log({
+  Cypress.log({
     displayName: `Navigate using to ${page}`,
     message: [`navigate to ${page}`],
-    autoEnd: false,
   });
 
-  cy.get('[data-test-id="navigation-menu"]').contains('a', page).click(config);
-  log.end();
+  cy.get(`[data-test-id="navigation-menu-${page}"]`).click(config);
 });
 
 Cypress.Commands.add('listenOnWebsocket', (fn) => {

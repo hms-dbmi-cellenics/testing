@@ -44,14 +44,13 @@ describe('Launches analysis successfully', () => {
       const projects = response.body;
 
       projects.forEach((project) => {
+        // Listen on websocket to get back GEM2S result
+        const experimentId = project.experiments[0];
         cy.selectProject(project.name);
 
         cy.wait('@getExperiment');
+        cy.launchAnalysis(experimentId);
 
-        cy.launchAnalysis();
-
-        // Listen on websocket to get back GEM2S result
-        const experimentId = project.experiments[0];
         cy.waitForGem2s(experimentId);
 
         // Waiting for data-processing to show up
