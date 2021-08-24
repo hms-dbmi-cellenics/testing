@@ -69,12 +69,12 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   });
 
   log.snapshot('open-modal');
-  cy.get('#create-new-project-modal').click({ force: true });
+  cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
   log.snapshot('type-name');
-  cy.get('#project-name').type(projectName);
+  cy.get('[data-test-id="project-name"]').type(projectName);
   log.snapshot('type-description');
-  cy.get('#project-description').type(projectDescription);
-  cy.get('#confirm-create-new-project').click();
+  cy.get('[data-test-id="project-description"]').type(projectDescription);
+  cy.get('[data-test-id="confirm-create-new-project"]').click();
   log.end();
 });
 
@@ -85,23 +85,23 @@ Cypress.Commands.add('deleteProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.contains('.project-card', projectName).find('.anticon-delete').click();
+  cy.get(`[data-test-id="project-card-${projectName}"]`).find('.anticon-delete').click();
   log.snapshot('opened-delete-modal');
 
-  cy.get('.delete-project-modal').find('input').type(projectName);
+  cy.get('.data-test-delete-project-modal').find('input').type(projectName);
   cy.contains('Permanently delete project').click();
   log.end();
 });
 
 Cypress.Commands.add('selectProject', (projectName) => {
   const log = Cypress.log({
-    displayName: 'Selecting a Project',
-    message: ['Selecting a project'],
+    displayName: 'Selecting project',
+    message: [`🔐 Selecting project named ${projectName}`],
     autoEnd: false,
   });
 
-  log.snapshot('select-project');
-  cy.contains('.project-card', projectName).click();
+  cy.get(`[data-test-id="project-card-${projectName}"]`).click();
+
   log.end();
 });
 
@@ -127,7 +127,7 @@ Cypress.Commands.add('navigateTo', (page, config = {}) => {
     autoEnd: false,
   });
 
-  cy.get('aside').contains('a', page).click(config);
+  cy.get('[data-test-id="navigation-menu"]').contains('a', page).click(config);
   log.end();
 });
 
@@ -180,7 +180,7 @@ Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
 
         const log = Cypress.log({
           displayName: 'GEM2S',
-          message: `GEM2S step ${step + 1} of ${numGem2sSteps} completed`,
+          message: `GEM2S task ${message.taskName} completed - step ${step + 1} of ${numGem2sSteps}`,
           autoEnd: false,
         });
         log.snapshot(`gem2s-step-${step + 1}`);

@@ -57,7 +57,7 @@ describe('Launches analysis successfully', () => {
         cy.waitForGem2s(experimentId);
 
         // Waiting for data-processing to show up
-        cy.contains('div > span', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
+        cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
 
         // Wait for QC to finish and then go back to Data Management to launch other analysis
         cy.navigateTo('Data Management', { timeout: qcTimeOut });

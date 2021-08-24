@@ -56,8 +56,9 @@ describe('Creates a new project when authenticated', () => {
       expect($p).to.contain(projectDescription);
     });
 
-    // Check that the project list (formed by .project-card elements) contains the project title
-    cy.get('.project-card').should(($p) => {
+    // Check that the project list (formed by [data-test-class=project-card-*] elements)
+    // contains the project title
+    cy.get('[data-test-class=project-card]').should(($p) => {
       expect($p).to.contain(projectName);
     });
   });
@@ -66,7 +67,7 @@ describe('Creates a new project when authenticated', () => {
     cy.deleteProject(projectName);
 
     // Make sure that the projectName is no longer in the project's list
-    cy.get('.project-card').contains(projectName).should('not.exist');
+    cy.get('[data-test-class=project-card]').contains(projectName).should('not.exist');
 
     // check that req/response are correct
     cy.wait('@deleteProject').should(({ request, response }) => {
