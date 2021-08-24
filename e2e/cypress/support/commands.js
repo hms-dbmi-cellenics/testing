@@ -165,14 +165,16 @@ Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
     const waitForNSteps = [...Array(numGem2sSteps).keys()];
 
     waitForNSteps.forEach((step) => {
-      cy.waitUntil(() => gem2sResponses[step] !== undefined,
-        {
-          timeout: gem2sStepTimeOut,
-          interval: 2000,
-          ...config,
-        }).then(() => {
-        const message = gem2sResponses[step];
-
+      cy.waitUntil(() => {
+        if (gem2sResponses.length === 0) return false;
+        const latestResponse = gem2sResponses.pop();
+        return latestResponse;
+      },
+      {
+        timeout: gem2sStepTimeOut,
+        interval: 2000,
+        ...config,
+      }).then((message) => {
         cy.log('Expecting step to complete and error to be undefined');
 
         // GEM2S steps doesn't "response" property if it's not error
@@ -184,6 +186,63 @@ Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
           autoEnd: false,
         });
         log.snapshot(`gem2s-step-${step + 1}`);
+        log.end();
+      });
+    });
+  });
+});
+
+Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
+  Cypress.log({
+    displayName: 'QC',
+    message: 'Waiting for QC to complete',
+  });
+
+  // Counted as 6 because classifier filter might not be run
+  const numQcSteps = 6;
+
+  const qcSteps = [
+    // 'classifier', removed becasue it's not a real step
+    'cellSizeDistribution',
+    'mitochondrialContent',
+    'numGenesVsNumUmis',
+    'doubletScores',
+    'configureEmbedding',
+    'dataIntegration',
+  ];
+
+  const qcStepTimeOut = (60 * 1000) * 5; // 5 minutes;
+
+  cy.listenOnWebsocket((socket) => {
+    const qcResponses = [];
+
+    socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
+      qcResponses.push(update);
+    });
+
+    // const waitForNSteps = [...Array(numQcSteps).keys()];
+
+    qcSteps.forEach((stepName, stepIdx) => {
+      cy.waitUntil(() => {
+        if (qcResponses.length === 0) return false;
+        const latestResponse = qcResponses.pop();
+        if (latestResponse.input.taskName !== stepName) return false;
+        return latestResponse;
+      },
+      {
+        timeout: qcStepTimeOut,
+        interval: 2000,
+        ...config,
+      }).then((message) => {
+        cy.log('Expecting step to complete and error to be false');
+        expect(message.response.error).to.equal(false);
+
+        const log = Cypress.log({
+          displayName: 'QC',
+          message: `QC task ${message.input.taskName} completed - step ${stepIdx + 1} of ${qcSteps.length}`,
+          autoEnd: false,
+        });
+        log.snapshot(`qc-step-${stepIdx + 1}`);
         log.end();
       });
     });
