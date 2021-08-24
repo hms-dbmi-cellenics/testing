@@ -198,11 +198,8 @@ Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
     message: 'Waiting for QC to complete',
   });
 
-  // Counted as 6 because classifier filter might not be run
-  const numQcSteps = 6;
-
   const qcSteps = [
-    // 'classifier', removed becasue it's not a real step
+    // 'classifier', not checked as a prerequisite to pass
     'cellSizeDistribution',
     'mitochondrialContent',
     'numGenesVsNumUmis',
@@ -211,7 +208,7 @@ Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
     'dataIntegration',
   ];
 
-  const qcStepTimeOut = (60 * 1000) * 5; // 5 minutes;
+  const qcStepTimeOut = (60 * 1000) * 10; // 10 minutes;
 
   cy.listenOnWebsocket((socket) => {
     const qcResponses = [];
@@ -219,8 +216,6 @@ Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
     socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
       qcResponses.push(update);
     });
-
-    // const waitForNSteps = [...Array(numQcSteps).keys()];
 
     qcSteps.forEach((stepName, stepIdx) => {
       cy.waitUntil(() => {
