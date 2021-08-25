@@ -49,7 +49,8 @@ describe('Launches analysis successfully', () => {
         cy.selectProject(project.name);
 
         cy.wait('@getExperiment');
-        cy.launchAnalysis(experimentId);
+
+        cy.launchAnalysis();
 
         cy.waitForGem2s(experimentId);
 

@@ -85,7 +85,7 @@ Cypress.Commands.add('deleteProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.get(`[data-test-id="project-card-${projectName}"]`).find('.anticon-delete').click();
+  cy.get('[data-test-class="project-card"]').contains(projectName).find('.anticon-delete').click();
   log.snapshot('opened-delete-modal');
 
   cy.get('.data-test-delete-project-modal').find('input').type(projectName);
@@ -100,12 +100,12 @@ Cypress.Commands.add('selectProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.get(`[data-test-id="project-card-${projectName}"]`).click();
+  cy.get('[data-test-class="project-card"]').contains(projectName).click();
 
   log.end();
 });
 
-Cypress.Commands.add('launchAnalysis', (experimentId) => {
+Cypress.Commands.add('launchAnalysis', () => {
   const log = Cypress.log({
     displayName: 'Launching analysis',
     message: ['launch analysis'],
@@ -116,7 +116,7 @@ Cypress.Commands.add('launchAnalysis', (experimentId) => {
   cy.get('[data-test-id="launch-analysis-button"]').click();
 
   log.snapshot('launch-experiment');
-  cy.get(`[data-test-id="launch-analysis-${experimentId}"]`).first().click();
+  cy.get('[data-test-class="launch-analysis-item"]').contains('button', 'Launch').first().click();
   log.end();
 });
 
@@ -127,7 +127,7 @@ Cypress.Commands.add('navigateTo', (page, config = {}) => {
     message: [`navigate to ${page}`],
   });
 
-  cy.get(`[data-test-id="navigation-menu-${page}"]`).click(config);
+  cy.get('[data-test-id="navigation-menu"]').contains('a', page).click(config);
 });
 
 Cypress.Commands.add('listenOnWebsocket', (fn) => {
