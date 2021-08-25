@@ -90,3 +90,47 @@ Cypress.Commands.add('deleteProject', (projectName) => {
   cy.contains('Permanently delete project').click();
   log.end();
 });
+
+Cypress.Commands.add('selectProject', (projectName) => {
+  const log = Cypress.log({
+    displayName: 'Selecting project',
+    message: [`🔐 Selecting project named ${projectName}`],
+    autoEnd: false,
+  });
+
+  cy.get('[data-test-class="project-card"]').contains(projectName).click();
+
+  log.end();
+});
+
+Cypress.Commands.add('addMetadata', () => {
+  const log = Cypress.log({
+    displayName: 'Adding metadata',
+    message: ['🔐 Adding metadata track'],
+    autoEnd: false,
+  });
+
+  cy.contains('button', 'Add metadata').click();
+
+  log.snapshot('opened-add-metadata-popover');
+
+  cy.contains('.ant-popover', 'Provide new metadata track name').find('.anticon-check').click();
+
+  log.snapshot('closed-add-metadata-popover');
+
+  log.end();
+});
+
+Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
+  const log = Cypress.log({
+    displayName: 'Adding metadata',
+    message: [`🔐 Adding metadata track named ${metadataTrackName}`],
+    autoEnd: false,
+  });
+
+  cy.contains('.ant-table-cell', 'Track 1').find('.anticon-delete').click();
+
+  log.snapshot('deleted-metadata');
+
+  log.end();
+});
