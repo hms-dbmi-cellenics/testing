@@ -85,7 +85,7 @@ Cypress.Commands.add('deleteProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.get('[data-test-class="project-card"]').contains(projectName).find('.anticon-delete').click();
+  cy.contains('[data-test-class="project-card"]', projectName).find('.anticon-delete').click();
   log.snapshot('opened-delete-modal');
 
   cy.get('.data-test-delete-project-modal').find('input').type(projectName);
@@ -100,7 +100,7 @@ Cypress.Commands.add('selectProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.get('[data-test-class="project-card"]').contains(projectName).click();
+  cy.contains('[data-test-class="project-card"]', projectName).click();
 
   log.end();
 });
