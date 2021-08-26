@@ -7,17 +7,42 @@ on:
         description: 'The environment to run the tests on (staging, production)'
         required: false
         default: 'production'
+      ref:
+        description: 'By default the script runs the latest tag when the environment is production, and latest branch commit otherwise.
+         Set this variable to override that behavior and run a specific ref regardless of the environment.'
+        required: false
+        default: ''
   schedule:
     - cron:  '22 2 * * *'
 
 jobs:
   run-e2e:
-    name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment || 'production') }}
+    name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment) }}
     runs-on: ubuntu-20.04
     steps:
       - id: checkout
         name: Check out source code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: checkout-correct-ref
+        name: Check out the correct test code ref
+        run: |-
+          # if we are in production check out the latest tag for the nightly build
+          if [ "$ENV" = "production" ] && [ "$REF" = "" ]; then
+            latesttag=$(git describe --tags --abbrev=0)
+            echo "Checking out ${latesttag}"
+            git checkout ${latesttag}
+          fi
+          # # if any ref was provided check it out
+          if [ "$REF" != "" ]; then
+            echo "Checking out $REF"
+            git checkout $REF
+          fi
+        env:
+          REF: ${{ github.event.inputs.ref }}
+          ENV: ${{ github.event.inputs.environment }}
 
       - id: checkout-biomage-utils
         if: github.event.inputs.environment == 'staging'
@@ -83,7 +108,7 @@ jobs:
 
       - id: send-to-slack
         name: Send failure notification to Slack
-        if: failure()
+        if: failure()  && github.event.inputs.environment == 'production' && github.event.inputs.ref == '' # just notify of failures for production nightly build
         env:
           SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1
