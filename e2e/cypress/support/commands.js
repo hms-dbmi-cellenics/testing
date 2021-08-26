@@ -135,6 +135,7 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.snapshot('deleted-metadata');
 
   log.end();
+});
 
 Cypress.Commands.add('launchAnalysis', () => {
   const log = Cypress.log({
