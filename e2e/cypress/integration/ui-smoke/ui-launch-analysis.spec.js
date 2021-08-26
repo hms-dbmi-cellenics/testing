@@ -3,7 +3,6 @@ import '../../support/commands';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
 const gem2sStepTimeOut = (60 * 1000) * 5; // 5 minutes;
-const qcStepTimeOut = (60 * 1000) * 30; // 30 minutes;
 
 describe('Launches analysis successfully', () => {
   // before each test:
@@ -46,9 +45,19 @@ describe('Launches analysis successfully', () => {
       projects.forEach((project) => {
         // Listen on websocket to get back GEM2S result
         const experimentId = project.experiments[0];
-        cy.selectProject(project.name);
+        cy.selectProject(project.name, { force: true });
 
         cy.wait('@getExperiment');
+
+        // We wait 2 seconds here to let the samples table rerender
+        // This happens because call to backendStatus causes projectDetails to rerender
+        // causing the element which Cypress had just selected to be no longer attached to the DOM
+        // and Cypress could not act or observe the element anymore.
+        // This call to wait may be revisited when we have refactored ProjectDetails
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(2000);
+
+        cy.changeSampleName();
 
         cy.launchAnalysis();
 
@@ -57,7 +66,6 @@ describe('Launches analysis successfully', () => {
         // Waiting for data-processing to show up
         cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
 
-        // Wait for QC to complete
         cy.waitForQc(experimentId);
 
         // Go back to Data Management to launch other analysis once GEM2S is done

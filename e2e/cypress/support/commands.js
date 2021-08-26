@@ -93,14 +93,14 @@ Cypress.Commands.add('deleteProject', (projectName) => {
   log.end();
 });
 
-Cypress.Commands.add('selectProject', (projectName) => {
+Cypress.Commands.add('selectProject', (projectName, config) => {
   const log = Cypress.log({
     displayName: 'Selecting project',
     message: [`🔐 Selecting project named ${projectName}`],
     autoEnd: false,
   });
 
-  cy.contains('[data-test-class="project-card"]', projectName).click();
+  cy.contains('[data-test-class="project-card"]', projectName).click(config);
 
   log.end();
 });
@@ -137,6 +137,30 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.end();
 });
 
+Cypress.Commands.add('changeSampleName', (n = 1, newName) => {
+  const log = Cypress.log({
+    displayName: 'Modifying sample name',
+    message: ['Modifying sample name to ensure GEM2S and QC launch'],
+    autoEnd: false,
+  });
+
+  const randomTestName = `Test-${Math.round(Math.random() * 10000)}`;
+
+  // eq(n) because the 1st cell (n = 0) is the header
+  cy.get('.data-test-class-sample-cell').eq(n).then(($sample) => {
+    cy.wrap($sample).find('.anticon-edit').click();
+    log.snapshot('editing-sample-name');
+
+    cy.wrap($sample).find('input').type('{selectall}{backspace}').type(newName || randomTestName);
+    log.snapshot('edited-sample-name');
+
+    cy.wrap($sample).find('.anticon-check').click();
+    log.snapshot('save-new-sample-name');
+  });
+
+  log.end();
+});
+
 Cypress.Commands.add('launchAnalysis', () => {
   const log = Cypress.log({
     displayName: 'Launching analysis',
@@ -144,11 +168,11 @@ Cypress.Commands.add('launchAnalysis', () => {
     autoEnd: false,
   });
 
-  log.snapshot('launch-analysis');
   cy.get('[data-test-id="launch-analysis-button"]').click();
+  log.snapshot('launch-analysis');
 
-  log.snapshot('launch-experiment');
   cy.get('[data-test-class="launch-analysis-item"]').contains('button', 'Launch').first().click();
+  log.snapshot('launch-experiment');
   log.end();
 });
 
