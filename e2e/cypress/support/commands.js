@@ -123,10 +123,10 @@ Cypress.Commands.add('addMetadata', () => {
   log.end();
 });
 
-Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
+Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
   const log = Cypress.log({
-    displayName: 'Adding metadata',
-    message: [`🔐 Adding metadata track named ${metadataTrackName}`],
+    displayName: 'Delete metadata',
+    message: [`🔐 Deleting metadata track named ${metadataTrackName}`],
     autoEnd: false,
   });
 
@@ -137,29 +137,29 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.end();
 });
 
-Cypress.Commands.add('changeSampleName', (n = 1, newName) => {
-  const log = Cypress.log({
-    displayName: 'Modifying sample name',
-    message: ['Modifying sample name to ensure GEM2S and QC launch'],
-    autoEnd: false,
-  });
+// Cypress.Commands.add('changeSampleName', (n = 1, newName) => {
+//   const log = Cypress.log({
+//     displayName: 'Modifying sample name',
+//     message: ['Modifying sample name to ensure GEM2S and QC launch'],
+//     autoEnd: false,
+//   });
 
-  const randomTestName = `Test-${Math.round(Math.random() * 10000)}`;
+//   const randomTestName = `Test-${Math.round(Math.random() * 10000)}`;
 
-  // eq(n) because the 1st cell (n = 0) is the header
-  cy.get('.data-test-class-sample-cell').eq(n).then(($sample) => {
-    cy.wrap($sample).find('.anticon-edit').click();
-    log.snapshot('editing-sample-name');
+//   // eq(n) because the 1st cell (n = 0) is the header
+//   cy.get('.data-test-class-sample-cell').eq(n).then(($sample) => {
+//     cy.wrap($sample).find('.anticon-edit').click();
+//     log.snapshot('editing-sample-name');
 
-    cy.wrap($sample).find('input').type('{selectall}{backspace}').type(newName || randomTestName);
-    log.snapshot('edited-sample-name');
+//     cy.wrap($sample).find('input').type('{selectall}{backspace}').type(newName || randomTestName);
+//     log.snapshot('edited-sample-name');
 
-    cy.wrap($sample).find('.anticon-check').click();
-    log.snapshot('save-new-sample-name');
-  });
+//     cy.wrap($sample).find('.anticon-check').click();
+//     log.snapshot('save-new-sample-name');
+//   });
 
-  log.end();
-});
+//   log.end();
+// });
 
 Cypress.Commands.add('launchAnalysis', () => {
   const log = Cypress.log({

@@ -57,7 +57,7 @@ describe('Launches analysis successfully', () => {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(2000);
 
-        cy.changeSampleName();
+        cy.addMetadata();
 
         cy.launchAnalysis();
 
@@ -70,6 +70,8 @@ describe('Launches analysis successfully', () => {
 
         // Go back to Data Management to launch other analysis once GEM2S is done
         cy.navigateTo('Data Management');
+
+        cy.deleteMetadata();
       });
     });
   });
