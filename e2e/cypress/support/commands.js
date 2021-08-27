@@ -137,30 +137,6 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
   log.end();
 });
 
-// Cypress.Commands.add('changeSampleName', (n = 1, newName) => {
-//   const log = Cypress.log({
-//     displayName: 'Modifying sample name',
-//     message: ['Modifying sample name to ensure GEM2S and QC launch'],
-//     autoEnd: false,
-//   });
-
-//   const randomTestName = `Test-${Math.round(Math.random() * 10000)}`;
-
-//   // eq(n) because the 1st cell (n = 0) is the header
-//   cy.get('.data-test-class-sample-cell').eq(n).then(($sample) => {
-//     cy.wrap($sample).find('.anticon-edit').click();
-//     log.snapshot('editing-sample-name');
-
-//     cy.wrap($sample).find('input').type('{selectall}{backspace}').type(newName || randomTestName);
-//     log.snapshot('edited-sample-name');
-
-//     cy.wrap($sample).find('.anticon-check').click();
-//     log.snapshot('save-new-sample-name');
-//   });
-
-//   log.end();
-// });
-
 Cypress.Commands.add('launchAnalysis', () => {
   const log = Cypress.log({
     displayName: 'Launching analysis',
@@ -207,7 +183,7 @@ Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
   });
 
   const numGem2sSteps = 7;
-  const gem2sStepTimeOut = (60 * 1000) * 5; // 5 minutes;
+  const gem2sStepTimeOut = (60 * 1000) * 30; // 30 minutes;
 
   cy.listenOnWebsocket((socket) => {
     const gem2sResponses = [];
@@ -263,7 +239,7 @@ Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
     'dataIntegration',
   ];
 
-  const qcStepTimeOut = (60 * 1000) * 10; // 10 minutes;
+  const qcStepTimeOut = (60 * 1000) * 30; // 30 minutes;
 
   cy.listenOnWebsocket((socket) => {
     const qcResponses = [];
