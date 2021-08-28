@@ -264,7 +264,7 @@ Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
 
         const log = Cypress.log({
           displayName: 'QC',
-          message: `QC task ${message.input.taskName} completed - step ${stepIdx + 1} of ${qcSteps.length}`,
+          message: `QC task ${message?.input.taskName} completed - step ${stepIdx + 1} of ${qcSteps.length}`,
           autoEnd: false,
         });
         log.snapshot(`qc-step-${stepIdx + 1}`);
