@@ -147,7 +147,7 @@ Cypress.Commands.add('launchAnalysis', () => {
   cy.get('[data-test-id="launch-analysis-button"]').click();
   log.snapshot('launch-analysis');
 
-  cy.get('[data-test-class="launch-analysis-item"]').contains('button', 'Launch').first().click();
+  cy.get('[data-test-class="launch-analysis-item"]').contains('button', /^Launch$/).first().click();
   log.snapshot('launch-experiment');
   log.end();
 });
