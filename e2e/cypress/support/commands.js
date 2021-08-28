@@ -93,14 +93,14 @@ Cypress.Commands.add('deleteProject', (projectName) => {
   log.end();
 });
 
-Cypress.Commands.add('selectProject', (projectName, config) => {
+Cypress.Commands.add('selectProject', (projectName, waitForProjectToAppear = true) => {
   const log = Cypress.log({
     displayName: 'Selecting project',
     message: [`🔐 Selecting project named ${projectName}`],
     autoEnd: false,
   });
 
-  cy.contains('[data-test-class="project-card"]', projectName).click(config);
+  cy.contains('[data-test-class="project-card"]', projectName).click({ force: !waitForProjectToAppear });
 
   log.end();
 });
@@ -153,13 +153,13 @@ Cypress.Commands.add('launchAnalysis', () => {
 });
 
 /** Valid values are text in the links in the navigation menu */
-Cypress.Commands.add('navigateTo', (page, config = {}) => {
+Cypress.Commands.add('navigateTo', (page) => {
   Cypress.log({
     displayName: `Navigate using to ${page}`,
     message: [`navigate to ${page}`],
   });
 
-  cy.get('[data-test-id="navigation-menu"]').contains('a', page).click(config);
+  cy.get('[data-test-id="navigation-menu"]').contains('a', page).click();
 });
 
 Cypress.Commands.add('listenOnWebsocket', (fn) => {
@@ -176,7 +176,7 @@ Cypress.Commands.add('listenOnWebsocket', (fn) => {
   fn(io);
 });
 
-Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
+Cypress.Commands.add('waitForGem2s', (experimentId, timeout, interval) => {
   Cypress.log({
     displayName: 'GEM2S',
     message: 'Waiting for GEM2S to complete',
@@ -202,9 +202,8 @@ Cypress.Commands.add('waitForGem2s', (experimentId, config = {}) => {
         return latestResponse;
       },
       {
-        timeout: gem2sStepTimeOut,
-        interval: 2000,
-        ...config,
+        timeout: timeout || gem2sStepTimeOut,
+        interval: interval || 2000,
       }).then((message) => {
         cy.log('Expecting step to complete and error to be undefined');
 
@@ -252,7 +251,7 @@ Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
       cy.waitUntil(() => {
         if (qcResponses.length === 0) return false;
         const latestResponse = qcResponses.pop();
-        if (latestResponse.input.taskName !== stepName) return false;
+        if (latestResponse?.input.taskName !== stepName) return false;
         return latestResponse;
       },
       {
