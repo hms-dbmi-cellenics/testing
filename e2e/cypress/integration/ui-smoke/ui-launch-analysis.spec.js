@@ -45,7 +45,7 @@ describe('Launches analysis successfully', () => {
       projects.forEach((project) => {
         // Listen on websocket to get back GEM2S result
         const experimentId = project.experiments[0];
-        cy.selectProject(project.name, { force: true });
+        cy.selectProject(project.name, false);
 
         cy.wait('@getExperiment');
 
