@@ -41,7 +41,7 @@ describe('Adds metadata to a sample in a created project', () => {
     const projectName = 'IntTest - Add Metadata Project';
     const metadataKeysArray = ['Track_1'];
 
-    cy.selectProject(projectName, { force: true });
+    cy.selectProject(projectName, false);
     cy.addMetadata('testMetadataName');
 
     // check that req/response are correct
@@ -63,7 +63,7 @@ describe('Adds metadata to a sample in a created project', () => {
     const projectName = 'IntTest - Add Metadata Project';
     const emptyMetadataKeysArray = [];
 
-    cy.selectProject(projectName, { force: true });
+    cy.selectProject(projectName, false);
     cy.deleteMetadata('Track_1');
 
     // check that req/response are correct
