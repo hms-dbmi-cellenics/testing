@@ -3,7 +3,7 @@ import '../../support/commands';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
 
-describe('Adds metadata to a sample in a created project', () => {
+describe('Adds species to samples in a created project', () => {
   // before each test:
   //   1. set up the network intercepts
   //   2. Log in into biomage
@@ -27,7 +27,7 @@ describe('Adds metadata to a sample in a created project', () => {
     const projectName = 'IntTest - Add Metadata Project';
 
     cy.selectProject(projectName);
-    cy.addSpecies();
+    cy.fillSpecies();
 
     // check that req/response are correct
     cy.wait('@updateSamples').should(({ request }) => {

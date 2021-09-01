@@ -135,18 +135,20 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.end();
 });
 
-Cypress.Commands.add('addSpecies', () => {
+Cypress.Commands.add('fillSpecies', () => {
   const log = Cypress.log({
-    displayName: 'Adding species',
-    message: ['Selecting first species from dropdown'],
+    displayName: 'Filling species',
+    message: ['Selecting first species from dropdown for all samples'],
     autoEnd: false,
   });
 
   cy.get('[data-test-id="fill-species"]').click();
 
-  cy.get('[data-test-class="species-select"]').first().click();
+  cy.get('[data-test-id="fill-species-select"]').click();
 
   cy.get('.ant-select-item-option-content').first().click();
+
+  cy.get('button').contains('Replace all').click();
 
   log.snapshot('Species form filled');
 
