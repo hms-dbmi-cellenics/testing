@@ -148,9 +148,9 @@ Cypress.Commands.add('fillSpecies', () => {
 
   cy.get('.ant-select-item-option-content').first().click();
 
-  cy.get('button').contains('Replace all').click();
-
   log.snapshot('Species form filled');
+
+  cy.get('button').contains('Replace all').click();
 
   log.end();
 });

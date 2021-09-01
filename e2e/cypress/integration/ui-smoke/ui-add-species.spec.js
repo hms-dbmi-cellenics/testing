@@ -23,6 +23,22 @@ describe('Adds species to samples in a created project', () => {
   // we have some kind of resize observer loop error that needs looking into
   Cypress.on('uncaught:exception', (err) => !resizeObserverLoopErrRe.test(err.message));
 
+  it('selects the species for individual samples', () => {
+    const projectName = 'IntTest - Add Metadata Project';
+
+    cy.selectProject(projectName);
+
+    cy.get('[data-test-class="species-select"]').first().click();
+    cy.get('.ant-select-item-option-content').first().click();
+
+    cy.get('[data-test-class="species-select"]').last().click();
+    cy.get('.ant-select-item-option-content').last().click();
+  });
+
+  it('has a species dropdown for each sample', () => {
+    cy.get('[data-test-class="species-select"]').should('have.length', 1);
+  });
+
   it('fills the species using the first option', () => {
     const projectName = 'IntTest - Add Metadata Project';
 
