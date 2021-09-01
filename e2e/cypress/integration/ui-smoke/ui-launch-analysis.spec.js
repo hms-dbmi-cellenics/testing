@@ -68,15 +68,15 @@ describe('Launches analysis successfully', () => {
 
       cy.waitForGem2s(experimentId);
 
-      // Waiting for data-processing to show up
-      cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
+      // // Waiting for data-processing to show up
+      // cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
 
-      cy.waitForQc(experimentId);
+      // cy.waitForQc(experimentId);
 
-      // Go back to Data Management to launch other analysis once GEM2S is done
-      cy.navigateTo('Data Management');
+      // // Go back to Data Management to launch other analysis once GEM2S is done
+      // cy.navigateTo('Data Management');
 
-      cy.deleteMetadata();
+      // cy.deleteMetadata();
     });
   });
 });
