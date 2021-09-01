@@ -32,13 +32,11 @@ describe('Adds metadata to a sample in a created project', () => {
     // check that req/response are correct
     cy.wait('@updateSamples').should(({ request }) => {
       expect(request.method).to.equal('PUT');
-      // also has NAME = WT1
-      // expect(request.body).to.have.property('species', 'hsapiens');
+      expect(Object.values(request.body.samples)[0]).to.have.property('species', 'hsapiens');
     });
-    //
-    // // Check that the current active project contains the project title & description
-    // cy.get('.ant-table-container').should((antTableContainer) => {
-    //   expect(antTableContainer).to.contain('Track 1');
-    // });
+
+    cy.get('[data-test-class="species-select"]').each(
+      (e) => expect(e.text()).to.contain('Human'),
+    );
   });
 });
