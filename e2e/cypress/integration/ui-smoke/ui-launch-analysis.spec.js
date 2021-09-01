@@ -39,40 +39,44 @@ describe('Launches analysis successfully', () => {
   });
 
   it('launches analysis', () => {
+    // Wait for project to load
     cy.wait('@getProjects').then(({ response }) => {
       const projects = response.body;
 
-      projects.forEach((project) => {
-        // Listen on websocket to get back GEM2S result
-        const experimentId = project.experiments[0];
-        cy.selectProject(project.name, false);
+      const projectName = 'IntTest - Vicky Multisample Murine';
 
-        cy.wait('@getExperiment');
+      // Get experiment id for the project
+      const project = projects.find((p) => p.name === projectName);
+      const experimentId = project.experiments[0];
 
-        // We wait 2 seconds here to let the samples table rerender
-        // This happens because call to backendStatus causes projectDetails to rerender
-        // causing the element which Cypress had just selected to be no longer attached to the DOM
-        // and Cypress could not act or observe the element anymore.
-        // This call to wait may be revisited when we have refactored ProjectDetails
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000);
+      // Listen on websocket to get back GEM2S result
+      cy.selectProject(projectName, false);
 
-        cy.addMetadata();
+      cy.wait('@getExperiment');
 
-        cy.launchAnalysis();
+      // We wait 2 seconds here to let the samples table rerender
+      // This happens because call to backendStatus causes projectDetails to rerender
+      // causing the element which Cypress had just selected to be no longer attached to the DOM
+      // and Cypress could not act or observe the element anymore.
+      // This call to wait may be revisited when we have refactored ProjectDetails
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000);
 
-        cy.waitForGem2s(experimentId);
+      cy.addMetadata();
 
-        // Waiting for data-processing to show up
-        cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
+      cy.launchAnalysis();
 
-        cy.waitForQc(experimentId);
+      cy.waitForGem2s(experimentId);
 
-        // Go back to Data Management to launch other analysis once GEM2S is done
-        cy.navigateTo('Data Management');
+      // Waiting for data-processing to show up
+      cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
 
-        cy.deleteMetadata();
-      });
+      cy.waitForQc(experimentId);
+
+      // Go back to Data Management to launch other analysis once GEM2S is done
+      cy.navigateTo('Data Management');
+
+      cy.deleteMetadata();
     });
   });
 });
