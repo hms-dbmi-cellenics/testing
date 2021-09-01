@@ -134,3 +134,21 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
 
   log.end();
 });
+
+Cypress.Commands.add('addSpecies', () => {
+  const log = Cypress.log({
+    displayName: 'Adding species',
+    message: ['Selecting first species from dropdown'],
+    autoEnd: false,
+  });
+
+  cy.get('[data-test-id="fill-species"]').click();
+
+  cy.get('[data-test-class="species-select"]').first().click();
+
+  cy.get('.ant-select-item-option-content').first().click();
+
+  log.snapshot('Species form filled');
+
+  log.end();
+});
