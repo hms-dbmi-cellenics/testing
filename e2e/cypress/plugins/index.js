@@ -50,7 +50,7 @@ module.exports = async (on, config) => {
     }
 
     case 'staging': {
-      config.baseUrl = 'https://ui-default.scp-staging.biomage.net';
+      config.baseUrl = `https://ui-${process.env.SANDBOX_ID}.scp-staging.biomage.net`;
       config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
       break;
     }
