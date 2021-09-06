@@ -7,15 +7,15 @@ on:
         description: 'The environment to run the tests on (staging, production)'
         required: false
         default: 'production'
-      sandboxId: 
-        description: 'If staging, the sandbox id (by default: "default")'
-        required: false
-        default: 'default'
       ref:
         description: 'By default the script runs the latest tag when the environment is production, and latest branch commit otherwise.
          Set this variable to override that behavior and run a specific ref regardless of the environment.'
         required: false
         default: ''
+      sandboxId: 
+        description: 'If staging, the sandbox id (by default: "default")'
+        required: false
+        default: 'default'
   schedule:
     - cron:  '22 2 * * *'
 
