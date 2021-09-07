@@ -103,6 +103,25 @@ Cypress.Commands.add('selectProject', (projectName) => {
   log.end();
 });
 
+Cypress.Commands.add('addSample', (action) => {
+  const log = Cypress.log({
+    displayName: 'Adding sample',
+    message: ['🔐 Adding sample'],
+    autoEnd: false,
+  });
+
+  cy.
+  cy.contains('button', 'Add metadata').click();
+
+  log.snapshot('opened-add-sample-modal');
+
+  cy.contains('.ant-popover', 'Provide new metadata track name').find('.anticon-check').click();
+
+  log.snapshot('closed-add-sample-modal');
+
+  log.end();
+});
+
 Cypress.Commands.add('addMetadata', () => {
   const log = Cypress.log({
     displayName: 'Adding metadata',
@@ -134,3 +153,52 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
 
   log.end();
 });
+
+// Based on https://stackoverflow.com/a/55436989
+Cypress.Commands.add('upload', (subject, file, fileName) => {
+
+
+
+  
+// Cypress.Commands.add('upload', (subject, file, fileName) => {
+  // we need access window to create a file below
+  // cy.window().then((window) => {
+    // line below could maybe be refactored to make use of Cypress.Blob.base64StringToBlob,
+    // instead of this custom function.
+    // inspired by @andygock, please refer to https://github.com/cypress-io/cypress/issues/170#issuecomment-389837191
+
+    // const blob = b64toBlob(file, '', 512);
+
+    // Please note that we need to create a file using window.File,
+    // cypress overwrites File and this is not compatible with our change handlers in React Code
+    
+    // const testFile = new window.File([blob], fileName);
+
+    // cy.
+
+    // cy.wrap(subject).trigger('drop', {
+    //   dataTransfer: { files: [testFile] },
+    // });
+  // });
+});
+
+// function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+//   const byteCharacters = atob(b64Data);
+//   const byteArrays = [];
+
+//   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+//     const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+//     const byteNumbers = new Array(slice.length);
+//     for (let i = 0; i < slice.length; i++) {
+//       byteNumbers[i] = slice.charCodeAt(i);
+//     }
+
+//     const byteArray = new Uint8Array(byteNumbers);
+
+//     byteArrays.push(byteArray);
+//   }
+
+//   const blob = new Blob(byteArrays, { type: contentType });
+//   return blob;
+// }
