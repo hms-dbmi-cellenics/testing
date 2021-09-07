@@ -1,7 +1,6 @@
 import { Auth } from 'aws-amplify';
 import 'cypress-localstorage-commands';
 import 'cypress-wait-until';
-import socketIOClient from 'socket.io-client';
 
 Cypress.Commands.add('login', () => {
   const username = Cypress.env('E2E_USERNAME'); // you should set the CYPRESS_E2E_USERNAME env variable
@@ -186,114 +185,33 @@ Cypress.Commands.add('navigateTo', (page) => {
   cy.get('[data-test-id="navigation-menu"]').contains('a', page).click();
 });
 
-Cypress.Commands.add('listenOnWebsocket', (fn) => {
-  const webSocketUrl = Cypress.env('webSocketUrl');
-
-  Cypress.log({
-    displayName: 'Connect to websocket',
-    message: `Connect to websocket on ${webSocketUrl}`,
-  });
-
-  const io = socketIOClient(webSocketUrl, { transports: ['websocket'] });
-
-  // Callbacks will have scope to io object
-  fn(io);
-});
-
-Cypress.Commands.add('waitForGem2s', (experimentId, timeout, interval) => {
-  Cypress.log({
+Cypress.Commands.add('waitForGem2s', (timeout) => {
+  const log = Cypress.log({
     displayName: 'GEM2S',
     message: 'Waiting for GEM2S to complete',
   });
 
-  const numGem2sSteps = 7;
-  const gem2sStepTimeOut = (60 * 1000) * 30; // 30 minutes;
+  cy.contains('We\'re launching your analysis...', { timeout });
+  log.snapshot('launch-experiment');
 
-  cy.listenOnWebsocket((socket) => {
-    const gem2sResponses = [];
-
-    socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
-      gem2sResponses.push(update);
-    });
-
-    // Create array [0, 1, 2, ... numGem2sSteps]
-    const waitForNSteps = [...Array(numGem2sSteps).keys()];
-
-    waitForNSteps.forEach((step) => {
-      cy.waitUntil(() => {
-        if (gem2sResponses.length === 0) return false;
-        const latestResponse = gem2sResponses.pop();
-        return latestResponse;
-      },
-      {
-        timeout: timeout || gem2sStepTimeOut,
-        interval: interval || 2000,
-      }).then((message) => {
-        cy.log('Expecting step to complete and error to be undefined');
-
-        // GEM2S steps doesn't "response" property if it's not error
-        expect(message.response).to.equal(undefined);
-
-        const log = Cypress.log({
-          displayName: 'GEM2S',
-          message: `GEM2S task ${message.taskName} completed - step ${step + 1} of ${numGem2sSteps}`,
-          autoEnd: false,
-        });
-        log.snapshot(`gem2s-step-${step + 1}`);
-        log.end();
-      });
-    });
-  });
+  // Wait for data processing to show up
+  cy.contains('.data-test-page-header', 'Data Processing', { timeout }).should('exist');
+  log.snapshot('data-processing');
+  log.end();
 });
 
-Cypress.Commands.add('waitForQc', (experimentId, config = {}) => {
-  Cypress.log({
+Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
+  const log = Cypress.log({
     displayName: 'QC',
     message: 'Waiting for QC to complete',
   });
 
-  const qcSteps = [
-    // 'classifier', not checked as a prerequisite to pass
-    'cellSizeDistribution',
-    'mitochondrialContent',
-    'numGenesVsNumUmis',
-    'doubletScores',
-    'configureEmbedding',
-    'dataIntegration',
-  ];
-
-  const qcStepTimeOut = (60 * 1000) * 30; // 30 minutes;
-
-  cy.listenOnWebsocket((socket) => {
-    const qcResponses = [];
-
-    socket.on(`ExperimentUpdates-${experimentId}`, (update) => {
-      qcResponses.push(update);
+  cy.waitUntil(() => cy.get('svg[data-test-class="qc-step-completed"]').should('have.length', numQcSteps),
+    {
+      timeout,
+      interval: 5000,
     });
 
-    qcSteps.forEach((stepName, stepIdx) => {
-      cy.waitUntil(() => {
-        if (qcResponses.length === 0) return false;
-        const latestResponse = qcResponses.pop();
-        if (latestResponse.input?.taskName !== stepName) return false;
-        return latestResponse;
-      },
-      {
-        timeout: qcStepTimeOut,
-        interval: 2000,
-        ...config,
-      }).then((message) => {
-        cy.log('Expecting step to complete and error to be false');
-        expect(message.response.error).to.equal(false);
-
-        const log = Cypress.log({
-          displayName: 'QC',
-          message: `QC task ${message.input.taskName} completed - step ${stepIdx + 1} of ${qcSteps.length}`,
-          autoEnd: false,
-        });
-        log.snapshot(`qc-step-${stepIdx + 1}`);
-        log.end();
-      });
-    });
-  });
+  log.snapshot('qc-completed');
+  log.end();
 });

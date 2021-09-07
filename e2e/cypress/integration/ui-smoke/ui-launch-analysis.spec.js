@@ -2,7 +2,8 @@
 import '../../support/commands';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
-const gem2sStepTimeOut = (60 * 1000) * 5; // 5 minutes;
+const gem2sTimeOut = (60 * 1000) * 30; // 30 minutes;
+const qcTimeOut = (60 * 1000) * 30; // 30 minutes;
 
 describe('Launches analysis successfully', () => {
   // before each test:
@@ -40,37 +41,21 @@ describe('Launches analysis successfully', () => {
 
   it('launches analysis', () => {
     // Wait for project to load
-    cy.wait('@getProjects').then(({ response }) => {
-      const projects = response.body;
+    cy.wait('@getProjects');
 
-      const projectName = 'IntTest - Add Metadata Project';
+    // const projectName = 'IntTest - Add Metadata Project';
+    const projectName = 'Project 1';
 
-      // Get experiment id for the project
-      const project = projects.find((p) => p.name === projectName);
-      const experimentId = project.experiments[0];
+    cy.selectProject(projectName, false);
 
-      // Listen on websocket to get back GEM2S result
-      cy.selectProject(projectName, false);
+    cy.wait('@getExperiment');
 
-      cy.wait('@getExperiment');
+    cy.changeSampleName();
 
-      // We wait 2 seconds here to let the samples table rerender
-      // This happens because call to backendStatus causes projectDetails to rerender
-      // causing the element which Cypress had just selected to be no longer attached to the DOM
-      // and Cypress could not act or observe the element anymore.
-      // This call to wait may be revisited when we have refactored ProjectDetails
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(2000);
+    cy.launchAnalysis();
 
-      cy.changeSampleName();
+    cy.waitForGem2s(gem2sTimeOut);
 
-      cy.launchAnalysis();
-
-      cy.waitForGem2s(experimentId);
-
-      // Waiting for data-processing to show up
-      cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
-
-    });
+    cy.waitForQc(qcTimeOut);
   });
 });
