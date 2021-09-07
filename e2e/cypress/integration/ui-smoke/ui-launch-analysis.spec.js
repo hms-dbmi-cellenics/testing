@@ -71,11 +71,6 @@ describe('Launches analysis successfully', () => {
       // Waiting for data-processing to show up
       cy.contains('.data-test-page-header', 'Data Processing', { timeout: gem2sStepTimeOut }).should('exist');
 
-      cy.waitForQc(experimentId);
-
-      // Go back to Data Management to launch other analysis once GEM2S is done
-      cy.navigateTo('Data Management');
-
     });
   });
 });
