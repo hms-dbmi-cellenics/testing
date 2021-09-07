@@ -43,7 +43,7 @@ describe('Launches analysis successfully', () => {
     cy.wait('@getProjects').then(({ response }) => {
       const projects = response.body;
 
-      const projectName = 'IntTest - Vicky Multisample Murine';
+      const projectName = 'IntTest - Add Metadata Project';
 
       // Get experiment id for the project
       const project = projects.find((p) => p.name === projectName);
@@ -62,7 +62,7 @@ describe('Launches analysis successfully', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);
 
-      cy.addMetadata();
+      cy.changeSampleName();
 
       cy.launchAnalysis();
 
@@ -76,7 +76,6 @@ describe('Launches analysis successfully', () => {
       // Go back to Data Management to launch other analysis once GEM2S is done
       cy.navigateTo('Data Management');
 
-      cy.deleteMetadata();
     });
   });
 });

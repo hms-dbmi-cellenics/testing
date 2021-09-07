@@ -137,6 +137,30 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
   log.end();
 });
 
+Cypress.Commands.add('changeSampleName', (samplePosition = 1, newName) => {
+  const log = Cypress.log({
+    displayName: 'Modifying sample name',
+    message: ['Modifying sample name to ensure GEM2S and QC launch'],
+    autoEnd: false,
+  });
+
+  const randomTestName = `Test-${Math.round(Math.random() * 10000)}`;
+
+  // eq(samplePosition) because the 1st cell (index 0) is the header
+  cy.get('.data-test-class-sample-cell').eq(samplePosition).then(($sample) => {
+    cy.wrap($sample).find('.anticon-edit').click();
+    log.snapshot('editing-sample-name');
+
+    cy.wrap($sample).find('input').type('{selectall}{backspace}').type(newName || randomTestName);
+    log.snapshot('edited-sample-name');
+
+    cy.wrap($sample).find('.anticon-check').click();
+    log.snapshot('save-new-sample-name');
+  });
+
+  log.end();
+});
+
 Cypress.Commands.add('launchAnalysis', () => {
   const log = Cypress.log({
     displayName: 'Launching analysis',
