@@ -84,7 +84,7 @@ Cypress.Commands.add('deleteProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.contains('[data-test-class="project-card"]', projectName).find('.anticon-delete').click();
+  cy.contains('[data-test-class="data-test-project-card"]', projectName).find('.anticon-delete').click();
   log.snapshot('opened-delete-modal');
 
   cy.get('.data-test-delete-project-modal').find('input').type(projectName);
@@ -99,7 +99,7 @@ Cypress.Commands.add('selectProject', (projectName, waitForProjectToAppear = tru
     autoEnd: false,
   });
 
-  cy.contains('[data-test-class="project-card"]', projectName).click({ force: !waitForProjectToAppear });
+  cy.contains('[data-test-class="data-test-project-card"]', projectName).click({ force: !waitForProjectToAppear });
 
   log.end();
 });
@@ -146,7 +146,7 @@ Cypress.Commands.add('changeSampleName', (samplePosition = 1, newName) => {
   const randomTestName = `Test-${Math.round(Math.random() * 10000)}`;
 
   // eq(samplePosition) because the 1st cell (index 0) is the header
-  cy.get('.data-test-class-sample-cell').eq(samplePosition).then(($sample) => {
+  cy.get('.data-test-sample-cell').eq(samplePosition).then(($sample) => {
     cy.wrap($sample).find('.anticon-edit').click();
     log.snapshot('editing-sample-name');
 
@@ -170,7 +170,7 @@ Cypress.Commands.add('launchAnalysis', () => {
   cy.get('[data-test-id="launch-analysis-button"]').click();
   log.snapshot('launch-analysis');
 
-  cy.get('[data-test-class="launch-analysis-item"]').contains('button', /^Launch$/).first().click();
+  cy.get('[data-test-class="data-test-launch-analysis-item"]').contains('button', /^Launch$/).first().click();
   log.snapshot('launch-experiment');
   log.end();
 });
@@ -206,7 +206,7 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
     message: 'Waiting for QC to complete',
   });
 
-  cy.waitUntil(() => cy.get('svg[data-test-class="qc-step-completed"]').should('have.length', numQcSteps),
+  cy.waitUntil(() => cy.get('svg[data-test-class="data-test-qc-step-completed"]').should('have.length', numQcSteps),
     {
       timeout,
       interval: 5000,

@@ -3,6 +3,7 @@ import '../../support/commands';
 import successResponse from '../../fixtures/successResponse.json';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
+const projectName = 'IntTest - Add Metadata Project';
 
 describe('Adds metadata to a sample in a created project', () => {
   // before each test:
@@ -38,7 +39,6 @@ describe('Adds metadata to a sample in a created project', () => {
   });
 
   it('creates a new metadata track', () => {
-    const projectName = 'IntTest - Add Metadata Project';
     const metadataKeysArray = ['Track_1'];
 
     cy.selectProject(projectName, false);
@@ -60,7 +60,6 @@ describe('Adds metadata to a sample in a created project', () => {
   });
 
   it('deletes an existing metadata track', () => {
-    const projectName = 'IntTest - Add Metadata Project';
     const emptyMetadataKeysArray = [];
 
     cy.selectProject(projectName, false);

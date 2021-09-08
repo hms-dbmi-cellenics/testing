@@ -2,6 +2,7 @@
 import '../../support/commands';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
+const projectName = 'IntTest - Add Metadata Project';
 const gem2sTimeOut = (60 * 1000) * 30; // 30 minutes;
 const qcTimeOut = (60 * 1000) * 30; // 30 minutes;
 
@@ -42,9 +43,6 @@ describe('Launches analysis successfully', () => {
   it('launches analysis', () => {
     // Wait for project to load
     cy.wait('@getProjects');
-
-    // const projectName = 'IntTest - Add Metadata Project';
-    const projectName = 'Project 1';
 
     cy.selectProject(projectName, false);
 
