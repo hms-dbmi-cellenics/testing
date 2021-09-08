@@ -206,7 +206,7 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
     message: 'Waiting for QC to complete',
   });
 
-  cy.waitUntil(() => cy.get('svg[data-test-class="data-test-qc-step-completed"]').should('have.length', numQcSteps),
+  cy.waitUntil(() => cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps),
     {
       timeout,
       interval: 5000,
