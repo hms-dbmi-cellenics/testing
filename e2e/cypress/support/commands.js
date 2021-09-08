@@ -136,21 +136,21 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
   log.end();
 });
 
-Cypress.Commands.add('changeSampleName', (samplePosition = 1, newName) => {
+Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
   const log = Cypress.log({
     displayName: 'Modifying sample name',
     message: ['Modifying sample name to ensure GEM2S and QC launch'],
     autoEnd: false,
   });
 
-  const randomTestName = `Test-${Math.round(Math.random() * 10000)}`;
+  const randomSampleName = `Test-${Math.round(Math.random() * 10000)}`;
 
   // eq(samplePosition) because the 1st cell (index 0) is the header
   cy.get('.data-test-sample-cell').eq(samplePosition).then(($sample) => {
     cy.wrap($sample).find('.anticon-edit').click();
     log.snapshot('editing-sample-name');
 
-    cy.wrap($sample).find('input').type('{selectall}{backspace}').type(newName || randomTestName);
+    cy.wrap($sample).find('input').type('{selectall}{backspace}').type(randomSampleName);
     log.snapshot('edited-sample-name');
 
     cy.wrap($sample).find('.anticon-check').click();
@@ -175,24 +175,18 @@ Cypress.Commands.add('launchAnalysis', () => {
   log.end();
 });
 
-/** Valid values are text in the links in the navigation menu */
-Cypress.Commands.add('navigateTo', (page) => {
-  Cypress.log({
-    displayName: `Navigate using to ${page}`,
-    message: [`navigate to ${page}`],
-  });
-
-  cy.get('[data-test-id="navigation-menu"]').contains('a', page).click();
-});
-
 Cypress.Commands.add('waitForGem2s', (timeout) => {
   const log = Cypress.log({
     displayName: 'GEM2S',
     message: 'Waiting for GEM2S to complete',
   });
 
-  cy.contains('We\'re launching your analysis...', { timeout });
+  // Check that launching gem2s does not fail
+  cy.contains('We\'ve had an issue while launching your analysis.').should('have.length', 0);
   log.snapshot('launch-experiment');
+
+  cy.contains('We\'re launching your analysis...', { timeout });
+  log.snapshot('gem2s-runs');
 
   // Wait for data processing to show up
   cy.contains('.data-test-page-header', 'Data Processing', { timeout }).should('exist');
@@ -206,11 +200,17 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
     message: 'Waiting for QC to complete',
   });
 
-  cy.waitUntil(() => cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps),
-    {
-      timeout,
-      interval: 5000,
+  cy.waitUntil(() => {
+    cy.get('svg[data-test-class="data-test-qc-step-error"]').then(($error) => {
+      if ($error.length > 0) throw new Error('QC step failed');
     });
+
+    return cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps);
+  },
+  {
+    timeout,
+    interval: 5000,
+  });
 
   log.snapshot('qc-completed');
   log.end();

@@ -48,7 +48,7 @@ describe('Launches analysis successfully', () => {
 
     cy.wait('@getExperiment');
 
-    cy.changeSampleName();
+    cy.randomizeSampleName(1);
 
     cy.launchAnalysis();
 
