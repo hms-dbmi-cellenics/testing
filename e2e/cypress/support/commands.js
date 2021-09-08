@@ -1,5 +1,6 @@
 import { Auth } from 'aws-amplify';
 import 'cypress-localstorage-commands';
+import 'cypress-file-upload';
 
 Cypress.Commands.add('login', () => {
   const username = Cypress.env('E2E_USERNAME'); // you should set the CYPRESS_E2E_USERNAME env variable
@@ -98,7 +99,7 @@ Cypress.Commands.add('selectProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.get('[data-test-class="project-card"]').contains(projectName).click();
+  cy.get('[data-test-class="data-test-project-card"]').contains(projectName).click();
 
   log.end();
 });
@@ -110,7 +111,6 @@ Cypress.Commands.add('addSample', (action) => {
     autoEnd: false,
   });
 
-  cy.
   cy.contains('button', 'Add metadata').click();
 
   log.snapshot('opened-add-sample-modal');
@@ -154,51 +154,46 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.end();
 });
 
+const dragAndDropFiles = (window, filePaths) => {
+  cy.get('[data-test-id="file-upload-dropzone"]')
+    .attachFile(filePaths, { subjectType: 'drag-n-drop', simulatedFilePath: filePaths });
+};
+
 // Based on https://stackoverflow.com/a/55436989
-Cypress.Commands.add('upload', (subject, file, fileName) => {
+Cypress.Commands.add('addSample', () => {
+  const log = Cypress.log({
+    displayName: 'Adding sample',
+    message: ['🔐 Adding sample files'],
+    autoEnd: false,
+  });
 
+  cy.get('[data-test-id="add-samples-button"]').click();
+  log.snapshot('opened-add-samples-modal');
 
+  // cy.fixture('WT1/barcodes.tsv.gz', 'binary')
+  //   .then(Cypress.Blob.binaryStringToBlob)
+  //   .then((fileContent) => {
+  //     console.log("fileContentDebug");
+  //     console.log(fileContent);
+  //     cy.get('[data-test-id="file-upload-dropzone"]').attachFile({
+  //       fileContent,
+  //       filePath: 'WT1/barcodes.tsv.gz',
+  //       encoding: 'utf-8',
+  //       lastModified: new Date().getTime(),
+  //     });
 
-  
-// Cypress.Commands.add('upload', (subject, file, fileName) => {
-  // we need access window to create a file below
-  // cy.window().then((window) => {
-    // line below could maybe be refactored to make use of Cypress.Blob.base64StringToBlob,
-    // instead of this custom function.
-    // inspired by @andygock, please refer to https://github.com/cypress-io/cypress/issues/170#issuecomment-389837191
+  //     log.snapshot('added-samples-files');
+  //   });
 
-    // const blob = b64toBlob(file, '', 512);
+  // Using this hack because folder upload is not supported yet.
+  // issue: https://github.com/abramenal/cypress-file-upload/issues/141
 
-    // Please note that we need to create a file using window.File,
-    // cypress overwrites File and this is not compatible with our change handlers in React Code
-    
-    // const testFile = new window.File([blob], fileName);
+  cy.window().then((window) => {
+    dragAndDropFiles(window, ['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv']);
+    // dragAndDropFiles(window, ['WT1/barcodes.tsv.gz', 'WT1/features.tsv.gz', 'WT1/matrix.mtx.gz']);
+    // dragAndDropFile(window, ');
+    // dragAndDropFile(window, );
 
-    // cy.
-
-    // cy.wrap(subject).trigger('drop', {
-    //   dataTransfer: { files: [testFile] },
-    // });
-  // });
+    log.snapshot('added-samples-files');
+  });
 });
-
-// function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
-//   const byteCharacters = atob(b64Data);
-//   const byteArrays = [];
-
-//   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-//     const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-//     const byteNumbers = new Array(slice.length);
-//     for (let i = 0; i < slice.length; i++) {
-//       byteNumbers[i] = slice.charCodeAt(i);
-//     }
-
-//     const byteArray = new Uint8Array(byteNumbers);
-
-//     byteArrays.push(byteArray);
-//   }
-
-//   const blob = new Blob(byteArrays, { type: contentType });
-//   return blob;
-// }

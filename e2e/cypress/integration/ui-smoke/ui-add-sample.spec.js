@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 import '../../support/commands';
-import successResponse from '../../fixtures/successResponse.json';
+// import successResponse from '../../fixtures/successResponse.json';
 
-import { addSampleActions as addFileActions } from '../../constants';
+import { addFileActions } from '../../constants';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
 
@@ -39,7 +39,7 @@ describe('Sample addition/removal', () => {
   });
 
   it('Adds a new sample by folder selection', () => {
-    const projectName = 'IntTest - Add Add sample Project';
+    const projectName = 'IntTest - Add sample Project';
 
     cy.selectProject(projectName);
 
