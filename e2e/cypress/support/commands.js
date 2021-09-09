@@ -188,8 +188,8 @@ Cypress.Commands.add('waitForGem2s', (timeout) => {
   cy.contains('We\'re launching your analysis...', { timeout });
   log.snapshot('gem2s-runs');
 
-  // Wait for data processing to show up
   cy.contains('.data-test-page-header', 'Data Processing', { timeout }).should('exist');
+
   log.snapshot('data-processing');
   log.end();
 });
@@ -201,10 +201,11 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
   });
 
   cy.waitUntil(() => {
-    cy.get('svg[data-test-class="data-test-qc-step-error"]').then(($error) => {
-      if ($error.length > 0) throw new Error('QC step failed');
-    });
-
+    cy.get('span[data-test-id="qc-status-text"]').then(
+      ($text) => {
+        if ($text.text() === 'failed') throw new Error('QC Step failed');
+      },
+    );
     return cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps);
   },
   {
