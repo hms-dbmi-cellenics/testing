@@ -154,7 +154,7 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.end();
 });
 
-const dragAndDropFiles = (window, filePaths) => {
+const dragAndDropFiles = (filePaths) => {
   cy.get('[data-test-id="file-upload-dropzone"]')
     .attachFile(filePaths, { subjectType: 'drag-n-drop', simulatedFilePath: filePaths });
 };
@@ -170,30 +170,10 @@ Cypress.Commands.add('addSample', () => {
   cy.get('[data-test-id="add-samples-button"]').click();
   log.snapshot('opened-add-samples-modal');
 
-  // cy.fixture('WT1/barcodes.tsv.gz', 'binary')
-  //   .then(Cypress.Blob.binaryStringToBlob)
-  //   .then((fileContent) => {
-  //     console.log("fileContentDebug");
-  //     console.log(fileContent);
-  //     cy.get('[data-test-id="file-upload-dropzone"]').attachFile({
-  //       fileContent,
-  //       filePath: 'WT1/barcodes.tsv.gz',
-  //       encoding: 'utf-8',
-  //       lastModified: new Date().getTime(),
-  //     });
+  dragAndDropFiles(['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv']);
 
-  //     log.snapshot('added-samples-files');
-  //   });
+  log.snapshot('added-samples-files');
 
-  // Using this hack because folder upload is not supported yet.
-  // issue: https://github.com/abramenal/cypress-file-upload/issues/141
+  
 
-  cy.window().then((window) => {
-    dragAndDropFiles(window, ['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv']);
-    // dragAndDropFiles(window, ['WT1/barcodes.tsv.gz', 'WT1/features.tsv.gz', 'WT1/matrix.mtx.gz']);
-    // dragAndDropFile(window, ');
-    // dragAndDropFile(window, );
-
-    log.snapshot('added-samples-files');
-  });
 });
