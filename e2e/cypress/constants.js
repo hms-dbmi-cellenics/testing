@@ -1,6 +1,6 @@
 const addFileActions = {
   DRAG_AND_DROP: 'dragAndDrop',
-  SELECT_FOLDER: 'selectFolder',
+  SELECT_INPUT: 'selectInput',
 };
 
 export {

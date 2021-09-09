@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify';
 import 'cypress-localstorage-commands';
-import 'cypress-file-upload';
+import { addFileActions } from '../constants';
+import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
 
 Cypress.Commands.add('login', () => {
   const username = Cypress.env('E2E_USERNAME'); // you should set the CYPRESS_E2E_USERNAME env variable
@@ -104,24 +105,6 @@ Cypress.Commands.add('selectProject', (projectName) => {
   log.end();
 });
 
-Cypress.Commands.add('addSample', (action) => {
-  const log = Cypress.log({
-    displayName: 'Adding sample',
-    message: ['🔐 Adding sample'],
-    autoEnd: false,
-  });
-
-  cy.contains('button', 'Add metadata').click();
-
-  log.snapshot('opened-add-sample-modal');
-
-  cy.contains('.ant-popover', 'Provide new metadata track name').find('.anticon-check').click();
-
-  log.snapshot('closed-add-sample-modal');
-
-  log.end();
-});
-
 Cypress.Commands.add('addMetadata', () => {
   const log = Cypress.log({
     displayName: 'Adding metadata',
@@ -154,13 +137,8 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.end();
 });
 
-const dragAndDropFiles = (filePaths) => {
-  cy.get('[data-test-id="file-upload-dropzone"]')
-    .attachFile(filePaths, { subjectType: 'drag-n-drop', simulatedFilePath: filePaths });
-};
-
 // Based on https://stackoverflow.com/a/55436989
-Cypress.Commands.add('addSample', () => {
+Cypress.Commands.add('addSample', (addFileAction) => {
   const log = Cypress.log({
     displayName: 'Adding sample',
     message: ['🔐 Adding sample files'],
@@ -170,10 +148,16 @@ Cypress.Commands.add('addSample', () => {
   cy.get('[data-test-id="add-samples-button"]').click();
   log.snapshot('opened-add-samples-modal');
 
-  dragAndDropFiles(['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv']);
+  const filesToAdd = ['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv'];
+
+  if (addFileAction === addFileActions.DRAG_AND_DROP) {
+    dragAndDropFiles(filesToAdd);
+  } else if (addFileAction === addFileActions.SELECT_INPUT) {
+    selectFilesFromInput(filesToAdd);
+  }
 
   log.snapshot('added-samples-files');
 
-  
-
+  cy.get('[data-test-id="file-upload-button"]').click();
+  log.snapshot('uploaded-samples-files');
 });

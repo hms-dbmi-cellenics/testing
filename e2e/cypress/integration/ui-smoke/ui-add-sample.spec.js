@@ -38,11 +38,19 @@ describe('Sample addition/removal', () => {
     return true;
   });
 
+  // it('Adds a new sample by folder selection', () => {
+  //   const projectName = 'IntTest - Add sample Project';
+
+  //   cy.selectProject(projectName);
+
+  //   cy.addSample(addFileActions.SELECT_FOLDER);
+  // });
+
   it('Adds a new sample by folder selection', () => {
     const projectName = 'IntTest - Add sample Project';
 
     cy.selectProject(projectName);
 
-    cy.addSample(addFileActions.SELECT_FOLDER);
+    cy.addSample(addFileActions.SELECT_INPUT);
   });
 });
