@@ -74,8 +74,12 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
   log.snapshot('type-name');
   cy.get('[data-test-id="project-name"]').type(projectName);
-  log.snapshot('type-description');
-  cy.get('[data-test-id="project-description"]').type(projectDescription);
+
+  if (projectDescription) {
+    log.snapshot('type-description');
+    cy.get('[data-test-id="project-description"]').type(projectDescription);
+  }
+
   cy.get('[data-test-id="confirm-create-new-project"]').click();
   log.end();
 });
@@ -170,10 +174,10 @@ Cypress.Commands.add('removeSample', () => {
     autoEnd: false,
   });
 
-  cy.get('[data-test-id="data-test-sample-cell-name-text"]')
-    .contains('WT1')
-    .get('[data-test-class="data-test-delete-editable-field-button"]')
-    .click();
+  cy.contains('.data-test-sample-name-cell', 'WT1')
+    .within(() => (
+      cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
+    ));
 
   log.snapshot('uploaded-samples-files');
 });

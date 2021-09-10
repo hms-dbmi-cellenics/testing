@@ -5,6 +5,7 @@ import '../../support/commands';
 import { addFileActions } from '../../constants';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
+const projectName = 'IntTest - Add sample Project';
 
 describe('Sample addition/removal', () => {
   // before each test:
@@ -12,22 +13,12 @@ describe('Sample addition/removal', () => {
   //   2. Log in into biomage
   //   3. Visit data-management
   beforeEach(() => {
-    // cy.intercept(
-    //   {
-    //     method: 'PUT',
-    //     url: '*/projects/*',
-    //   },
-    // ).as('putProject');
-
-    // cy.intercept(
-    //   {
-    //     method: 'PUT',
-    //     url: '**/samples',
-    //   },
-    // ).as('updateSamples');
-
     cy.login();
     cy.visit('/data-management');
+  });
+
+  afterEach(() => {
+    cy.removeSample();
   });
 
   // we have some kind of resize observer loop error that needs looking into
@@ -38,23 +29,29 @@ describe('Sample addition/removal', () => {
     return true;
   });
 
-  // it('Adds a new sample by folder selection', () => {
-  //   const projectName = 'IntTest - Add sample Project';
+  it('Adds a new sample correctly by drag and drop', () => {
+    cy.selectProject(projectName);
 
-  //   cy.selectProject(projectName);
+    cy.addSample(addFileActions.DRAG_AND_DROP);
 
-  //   cy.addSample(addFileActions.SELECT_FOLDER);
-  // });
+    // Sample cell shows up
+    cy.get('.data-test-sample-name-cell').should('be.visible');
 
-  it('Adds a new sample by folder selection', () => {
-    const projectName = 'IntTest - Add sample Project';
+    // Wait until all files are loaded
+    const uploadTimeout = 60 * 1000; // 1 minute;
+    cy.get('[data-test-id="launch-analysis-button"]', { timeout: uploadTimeout }).should('be.enabled');
+  });
 
-    cy.createProject(projectName);
-
+  it('Adds a new sample correctly by input selection', () => {
     cy.selectProject(projectName);
 
     cy.addSample(addFileActions.SELECT_INPUT);
 
-    cy.removeSample();
+    // Sample cell shows up
+    cy.get('.data-test-sample-name-cell').should('be.visible');
+
+    // Wait until all files are loaded
+    const uploadTimeout = 60 * 1000; // 1 minute;
+    cy.get('[data-test-id="launch-analysis-button"]', { timeout: uploadTimeout }).should('be.enabled');
   });
 });
