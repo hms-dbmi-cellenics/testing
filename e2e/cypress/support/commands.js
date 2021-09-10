@@ -181,10 +181,6 @@ Cypress.Commands.add('waitForGem2s', (timeout) => {
     message: 'Waiting for GEM2S to complete',
   });
 
-  // Check that launching gem2s does not fail
-  cy.contains('We\'ve had an issue while launching your analysis.').should('have.length', 0);
-  log.snapshot('launch-experiment');
-
   cy.contains('We\'re launching your analysis...', { timeout });
   log.snapshot('gem2s-runs');
 

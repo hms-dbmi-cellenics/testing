@@ -1,10 +1,9 @@
 /// <reference types="cypress" />
 import '../../support/commands';
 
-const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
 const projectName = 'IntTest - Add Metadata Project';
-const gem2sTimeOut = (60 * 1000) * 30; // 30 minutes;
-const qcTimeOut = (60 * 1000) * 30; // 30 minutes;
+const gem2sTimeOut = (60 * 1000) * 20; // 20 minutes;
+const qcTimeOut = (60 * 1000) * 20; // 20 minutes;
 
 describe('Launches analysis successfully', () => {
   // before each test:
@@ -30,14 +29,6 @@ describe('Launches analysis successfully', () => {
 
     cy.login();
     cy.visit('/data-management');
-  });
-
-  // we have some kind of resize observer loop error that needs looking into
-  Cypress.on('uncaught:exception', (err) => {
-    if (resizeObserverLoopErrRe.test(err.message)) {
-      return false;
-    }
-    return true;
   });
 
   it('launches analysis', () => {
