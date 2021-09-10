@@ -2,7 +2,7 @@
 import '../../support/commands';
 import successResponse from '../../fixtures/successResponse.json';
 
-const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
+const projectName = 'IntTest - Add Metadata Project';
 
 describe('Adds metadata to a sample in a created project', () => {
   // before each test:
@@ -29,19 +29,10 @@ describe('Adds metadata to a sample in a created project', () => {
     cy.visit('/data-management');
   });
 
-  // we have some kind of resize observer loop error that needs looking into
-  Cypress.on('uncaught:exception', (err) => {
-    if (resizeObserverLoopErrRe.test(err.message)) {
-      return false;
-    }
-    return true;
-  });
-
   it('creates a new metadata track', () => {
-    const projectName = 'IntTest - Add Metadata Project';
     const metadataKeysArray = ['Track_1'];
 
-    cy.selectProject(projectName);
+    cy.selectProject(projectName, false);
     cy.addMetadata('testMetadataName');
 
     // check that req/response are correct
@@ -60,10 +51,9 @@ describe('Adds metadata to a sample in a created project', () => {
   });
 
   it('deletes an existing metadata track', () => {
-    const projectName = 'IntTest - Add Metadata Project';
     const emptyMetadataKeysArray = [];
 
-    cy.selectProject(projectName);
+    cy.selectProject(projectName, false);
     cy.deleteMetadata('Track_1');
 
     // check that req/response are correct
