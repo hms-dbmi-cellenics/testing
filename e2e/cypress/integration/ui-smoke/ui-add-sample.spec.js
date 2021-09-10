@@ -49,8 +49,12 @@ describe('Sample addition/removal', () => {
   it('Adds a new sample by folder selection', () => {
     const projectName = 'IntTest - Add sample Project';
 
+    cy.createProject(projectName);
+
     cy.selectProject(projectName);
 
     cy.addSample(addFileActions.SELECT_INPUT);
+
+    cy.removeSample();
   });
 });

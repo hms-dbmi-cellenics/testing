@@ -137,7 +137,6 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName) => {
   log.end();
 });
 
-// Based on https://stackoverflow.com/a/55436989
 Cypress.Commands.add('addSample', (addFileAction) => {
   const log = Cypress.log({
     displayName: 'Adding sample',
@@ -159,5 +158,20 @@ Cypress.Commands.add('addSample', (addFileAction) => {
   log.snapshot('added-samples-files');
 
   cy.get('[data-test-id="file-upload-button"]').click();
+  log.snapshot('uploaded-samples-files');
+});
+
+Cypress.Commands.add('removeSample', () => {
+  const log = Cypress.log({
+    displayName: 'Removing sample',
+    message: ['🔐 Removing sample'],
+    autoEnd: false,
+  });
+
+  cy.get('[data-test-id="data-test-sample-cell-name-text"]')
+    .contains('WT1')
+    .get('[data-test-class="data-test-delete-editable-field-button"]')
+    .click();
+
   log.snapshot('uploaded-samples-files');
 });
