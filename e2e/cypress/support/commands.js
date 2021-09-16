@@ -143,6 +143,9 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
   log.end();
 });
 
+// IMPORTANT only works with files that are uncompressed, gem2s fails with compressed files
+// (probably due to file sizes wrong calculation, if we consider this should be fixed
+// the work should probably be done in the forked repo cypress-file-upload)
 Cypress.Commands.add('addSample', (addFileAction) => {
   const log = Cypress.log({
     displayName: 'Adding sample',
