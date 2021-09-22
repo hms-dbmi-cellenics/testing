@@ -30,8 +30,6 @@ describe('Sample addition/removal', () => {
   });
 
   it('Adds a new sample correctly by drag and drop', () => {
-    cy.selectProject(projectName);
-
     cy.addSample(addFileActions.DRAG_AND_DROP);
 
     // Sample cell shows up
@@ -47,8 +45,6 @@ describe('Sample addition/removal', () => {
   });
 
   it('Adds a new sample correctly by input selection', () => {
-    cy.selectProject(projectName);
-
     cy.addSample(addFileActions.SELECT_INPUT);
 
     // Sample cell shows up
