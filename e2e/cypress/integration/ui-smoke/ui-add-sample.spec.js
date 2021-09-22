@@ -14,10 +14,11 @@ describe('Sample addition/removal', () => {
   beforeEach(() => {
     cy.login();
     cy.visit('/data-management');
+    cy.createProject(projectName);
   });
 
   afterEach(() => {
-    cy.removeSample();
+    cy.deleteProject(projectName);
   });
 
   // we have some kind of resize observer loop error that needs looking into
@@ -34,11 +35,15 @@ describe('Sample addition/removal', () => {
     cy.addSample(addFileActions.DRAG_AND_DROP);
 
     // Sample cell shows up
-    cy.contains('.data-test-sample-in-table-name').contains('WT1').should('be.visible');
+    cy.contains('.data-test-sample-in-table-name', 'WT1').should('be.visible');
 
     // Wait until all files are loaded
     const uploadTimeout = 60 * 1000; // 1 minute;
     cy.get('[data-test-id="launch-analysis-button"]', { timeout: uploadTimeout }).should('be.enabled');
+    cy.removeSample();
+
+    // Sample cell no longer shows up
+    cy.contains('.data-test-sample-in-table-name', 'WT1').should('not.exist');
   });
 
   it('Adds a new sample correctly by input selection', () => {
@@ -47,10 +52,14 @@ describe('Sample addition/removal', () => {
     cy.addSample(addFileActions.SELECT_INPUT);
 
     // Sample cell shows up
-    cy.get('.data-test-sample-in-table-name').should('be.visible');
+    cy.contains('.data-test-sample-in-table-name', 'WT1').should('be.visible');
 
     // Wait until all files are loaded
     const uploadTimeout = 60 * 1000; // 1 minute;
     cy.get('[data-test-id="launch-analysis-button"]', { timeout: uploadTimeout }).should('be.enabled');
+    cy.removeSample();
+
+    // Sample cell no longer shows up
+    cy.contains('.data-test-sample-in-table-name', 'WT1').should('not.exist');
   });
 });

@@ -91,10 +91,14 @@ Cypress.Commands.add('deleteProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.contains('[data-test-class="data-test-project-card"]', projectName).find('.anticon-delete').click();
+  cy.contains('[data-test-class="data-test-project-card"]', projectName)
+    .within(() => (
+      cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
+    ));
+
   log.snapshot('opened-delete-modal');
 
-  cy.get('.data-test-delete-project-modal').find('input').type(projectName);
+  cy.get('[data-test-id="data-test-delete-project-input"]').type(projectName);
   cy.contains('Permanently delete project').click();
   log.end();
 });
