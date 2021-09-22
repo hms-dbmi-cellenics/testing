@@ -177,7 +177,7 @@ Cypress.Commands.add('removeSample', () => {
     autoEnd: false,
   });
 
-  cy.contains('.data-test-sample-name-cell', 'WT1')
+  cy.contains('.data-test-samples-in-table-name', 'WT1')
     .within(() => (
       cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
     ));
