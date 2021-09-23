@@ -33,7 +33,7 @@ describe('Sample addition/removal', () => {
     cy.addSample(addFileActions.DRAG_AND_DROP);
 
     // Sample cell shows up
-    cy.contains('.data-test-sample-in-table-name', 'WT1').should('be.visible');
+    cy.contains('.data-test-sample-in-table-name', 'WT1', { timeout: 10000 }).should('be.visible');
 
     // Wait until all files are loaded
     const uploadTimeout = 60 * 1000; // 1 minute;
@@ -48,7 +48,7 @@ describe('Sample addition/removal', () => {
     cy.addSample(addFileActions.SELECT_INPUT);
 
     // Sample cell shows up
-    cy.contains('.data-test-sample-in-table-name', 'WT1').should('be.visible');
+    cy.contains('.data-test-sample-in-table-name', 'WT1', { timeout: 10000 }).should('be.visible');
 
     // Wait until all files are loaded
     const uploadTimeout = 60 * 1000; // 1 minute;
