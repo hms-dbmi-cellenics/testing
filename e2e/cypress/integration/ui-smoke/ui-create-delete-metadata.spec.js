@@ -11,20 +11,13 @@ describe('Adds metadata to a sample in a created project', () => {
   //   2. Log in into biomage
   //   3. Visit data-management
   beforeEach(() => {
-    // Intercept PUT/DELETE calls to */project/* endpoint
+    // Intercept PUT calls to */project/* endpoint
     cy.intercept(
       {
         method: 'PUT',
         url: '*/projects/*',
       },
     ).as('putProject');
-
-    cy.intercept(
-      {
-        method: 'DELETE',
-        url: '*/projects/*',
-      },
-    ).as('deleteProject');
 
     cy.login();
     cy.visit('/data-management');

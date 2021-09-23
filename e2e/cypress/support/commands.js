@@ -1,6 +1,9 @@
 import { Auth } from 'aws-amplify';
-import 'cypress-localstorage-commands';
 import 'cypress-wait-until';
+import 'cypress-localstorage-commands';
+
+import { addFileActions } from '../constants';
+import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
 
 Cypress.Commands.add('login', () => {
   const username = Cypress.env('E2E_USERNAME'); // you should set the CYPRESS_E2E_USERNAME env variable
@@ -71,9 +74,13 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
   log.snapshot('type-name');
   cy.get('[data-test-id="project-name"]').type(projectName);
-  log.snapshot('type-description');
-  cy.get('[data-test-id="project-description"]').type(projectDescription);
-  cy.get('[data-test-id="confirm-create-new-project"]').click();
+
+  if (projectDescription) {
+    log.snapshot('type-description');
+    cy.get('[data-test-id="project-description"]').type(projectDescription);
+  }
+
+  cy.get('[data-test-id="confirm-create-new-project"]').click({ force: true });
   log.end();
 });
 
@@ -84,10 +91,14 @@ Cypress.Commands.add('deleteProject', (projectName) => {
     autoEnd: false,
   });
 
-  cy.contains('[data-test-class="data-test-project-card"]', projectName).find('.anticon-delete').click();
+  cy.contains('[data-test-class="data-test-project-card"]', projectName)
+    .within(() => (
+      cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
+    ));
+
   log.snapshot('opened-delete-modal');
 
-  cy.get('.data-test-delete-project-modal').find('input').type(projectName);
+  cy.get('[data-test-id="data-test-delete-project-input"]').type(projectName);
   cy.contains('Permanently delete project').click();
   log.end();
 });
@@ -134,6 +145,48 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
   log.snapshot('deleted-metadata');
 
   log.end();
+});
+
+// IMPORTANT only works with files that are uncompressed, gem2s fails with compressed files
+// (probably due to file sizes wrong calculation, if we consider this should be fixed
+// the work should probably be done in the forked repo cypress-file-upload)
+Cypress.Commands.add('addSample', (addFileAction) => {
+  const log = Cypress.log({
+    displayName: 'Adding sample',
+    message: ['🔐 Adding sample files'],
+    autoEnd: false,
+  });
+
+  cy.get('[data-test-id="add-samples-button"]').click({ force: true });
+  log.snapshot('opened-add-samples-modal');
+
+  const filesToAdd = ['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv'];
+
+  if (addFileAction === addFileActions.DRAG_AND_DROP) {
+    dragAndDropFiles(filesToAdd);
+  } else if (addFileAction === addFileActions.SELECT_INPUT) {
+    selectFilesFromInput(filesToAdd);
+  }
+
+  log.snapshot('added-samples-files');
+
+  cy.get('[data-test-id="file-upload-button"]').click();
+  log.snapshot('uploaded-samples-files');
+});
+
+Cypress.Commands.add('removeSample', () => {
+  const log = Cypress.log({
+    displayName: 'Removing sample',
+    message: ['🔐 Removing sample'],
+    autoEnd: false,
+  });
+
+  cy.contains('.data-test-sample-in-table-name', 'WT1')
+    .within(() => (
+      cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
+    ));
+
+  log.snapshot('uploaded-samples-files');
 });
 
 Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
