@@ -157,7 +157,7 @@ Cypress.Commands.add('addSample', (addFileAction) => {
     autoEnd: false,
   });
 
-  cy.get('[data-test-id="add-samples-button"]').click();
+  cy.get('[data-test-id="add-samples-button"]').click({ force: true });
   log.snapshot('opened-add-samples-modal');
 
   const filesToAdd = ['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv'];
