@@ -3,6 +3,7 @@ import '../../support/commands';
 import successResponse from '../../fixtures/successResponse.json';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
+const projectName = 'IntTest - Add Metadata Project';
 
 describe('Adds metadata to a sample in a created project', () => {
   // before each test:
@@ -10,20 +11,13 @@ describe('Adds metadata to a sample in a created project', () => {
   //   2. Log in into biomage
   //   3. Visit data-management
   beforeEach(() => {
-    // Intercept PUT/DELETE calls to */project/* endpoint
+    // Intercept PUT calls to */project/* endpoint
     cy.intercept(
       {
         method: 'PUT',
         url: '*/projects/*',
       },
     ).as('putProject');
-
-    cy.intercept(
-      {
-        method: 'DELETE',
-        url: '*/projects/*',
-      },
-    ).as('deleteProject');
 
     cy.login();
     cy.visit('/data-management');
@@ -38,10 +32,9 @@ describe('Adds metadata to a sample in a created project', () => {
   });
 
   it('creates a new metadata track', () => {
-    const projectName = 'IntTest - Add Metadata Project';
     const metadataKeysArray = ['Track_1'];
 
-    cy.selectProject(projectName);
+    cy.selectProject(projectName, false);
     cy.addMetadata('testMetadataName');
 
     // check that req/response are correct
@@ -60,10 +53,9 @@ describe('Adds metadata to a sample in a created project', () => {
   });
 
   it('deletes an existing metadata track', () => {
-    const projectName = 'IntTest - Add Metadata Project';
     const emptyMetadataKeysArray = [];
 
-    cy.selectProject(projectName);
+    cy.selectProject(projectName, false);
     cy.deleteMetadata('Track_1');
 
     // check that req/response are correct

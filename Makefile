@@ -28,13 +28,13 @@ test:
 	@echo
 
 test-staging:
-	@echo "==> Running tests on development environment..."
+	@echo "==> Running tests on staging environment..."
 	cd e2e && K8S_ENV=staging npm run dev
 	@echo "    [✓]"
 	@echo
 
 test-production:
-	@echo "==> Running tests on development environment..."
+	@echo "==> Running tests on production environment..."
 	cd e2e && K8S_ENV=production npm run dev
 	@echo "    [✓]"
 	@echo

@@ -5,13 +5,17 @@ on:
     inputs:
       environment:
         description: 'The environment to run the tests on (staging, production)'
-        required: false
+        required: true
         default: 'production'
       ref:
         description: 'By default the script runs the latest tag when the environment is production, and latest branch commit otherwise.
          Set this variable to override that behavior and run a specific ref regardless of the environment.'
         required: false
         default: ''
+      sandboxId: 
+        description: 'If staging, the sandbox id (by default: "default")'
+        required: false
+        default: 'default'
   schedule:
     - cron:  '22 2 * * *'
 
@@ -101,10 +105,12 @@ jobs:
         name: Run e2e tests
         run: |-
           cd e2e/
-          K8S_ENV=${{ github.event.inputs.environment || 'production' }} npm start
+          npm start
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+          K8S_ENV: ${{ github.event.inputs.environment || 'production' }} 
+          SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
 
       - id: send-to-slack
         name: Send failure notification to Slack
