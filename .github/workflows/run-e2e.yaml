@@ -5,7 +5,7 @@ on:
     inputs:
       environment:
         description: 'The environment to run the tests on (staging, production)'
-        required: false
+        required: true
         default: 'production'
       ref:
         description: 'By default the script runs the latest tag when the environment is production, and latest branch commit otherwise.
