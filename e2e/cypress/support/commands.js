@@ -80,7 +80,7 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
     cy.get('[data-test-id="project-description"]').type(projectDescription);
   }
 
-  cy.get('[data-test-id="confirm-create-new-project"]').click({ force: true });
+  cy.get('[data-test-id="confirm-create-new-project"]').click();
   log.end();
 });
 
@@ -93,7 +93,7 @@ Cypress.Commands.add('deleteProject', (projectName) => {
 
   cy.contains('[data-test-class="data-test-project-card"]', projectName)
     .within(() => (
-      cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
+      cy.get('[data-test-class="data-test-delete-editable-field-button"]').click()
     ));
 
   log.snapshot('opened-delete-modal');
