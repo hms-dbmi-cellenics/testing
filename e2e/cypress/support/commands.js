@@ -220,11 +220,11 @@ Cypress.Commands.add('launchAnalysis', () => {
     autoEnd: false,
   });
 
-  cy.get('[data-test-id="launch-analysis-button"]').click();
-  log.snapshot('launch-analysis');
+  cy.get('[data-test-id="process-project-button"]').click();
+  log.snapshot('process-project-popup');
 
-  cy.get('[data-test-class="data-test-launch-analysis-item"]').contains('button', /^Launch$/).first().click();
-  log.snapshot('launch-experiment');
+  cy.get('[data-test-id="confirm-process-project-button"]').click();
+  log.snapshot('process-project');
   log.end();
 });
 
