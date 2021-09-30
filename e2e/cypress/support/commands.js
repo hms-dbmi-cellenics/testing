@@ -265,3 +265,19 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
   log.snapshot('qc-completed');
   log.end();
 });
+
+Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {
+  const log = Cypress.log({
+    displayName: 'Cleaning up previous project',
+    message: ['clean project'],
+  });
+
+  const projectExists = Cypress.$(`span:contains(${projectName})`).length;
+
+  if (projectExists) {
+    cy.deleteProject(projectName);
+  }
+
+  log.snapshot('project-cleaned-up');
+  log.end();
+});
