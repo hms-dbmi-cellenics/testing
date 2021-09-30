@@ -220,7 +220,7 @@ Cypress.Commands.add('launchAnalysis', () => {
     autoEnd: false,
   });
 
-  cy.get('[data-test-id="launch-analysis-button"]').click();
+  cy.get('[data-test-id="launch-analysis-button"]').click({ force: true });
   log.snapshot('launch-analysis');
 
   cy.get('[data-test-class="data-test-launch-analysis-item"]').contains('button', /^Launch$/).first().click();
