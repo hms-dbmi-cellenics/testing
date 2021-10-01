@@ -80,7 +80,7 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
     cy.get('[data-test-id="project-description"]').type(projectDescription);
   }
 
-  cy.get('[data-test-id="confirm-create-new-project"]').click();
+  cy.get('[data-test-id="confirm-create-new-project"]').click({ force: true });
   log.end();
 });
 
