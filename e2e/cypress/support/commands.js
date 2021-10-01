@@ -71,7 +71,7 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   });
 
   log.snapshot('open-modal');
-  cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
+  cy.get('[data-test-id="create-new-project-button"]').scrollIntoView().click();
   log.snapshot('type-name');
   cy.get('[data-test-id="project-name"]').type(projectName);
 
