@@ -93,7 +93,7 @@ Cypress.Commands.add('deleteProject', (projectName) => {
 
   cy.contains('[data-test-class="data-test-project-card"]', projectName)
     .within(() => (
-      cy.get('[data-test-class="data-test-delete-editable-field-button"]').scrollIntoView().click()
+      cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
     ));
 
   log.snapshot('opened-delete-modal');
