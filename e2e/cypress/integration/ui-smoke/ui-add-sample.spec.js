@@ -42,7 +42,7 @@ describe('Sample addition/removal', () => {
 
     // Wait until all files are loaded
     const uploadTimeout = 60 * 1000; // 1 minute;
-    cy.get('[data-test-id="launch-analysis-button"]', { timeout: uploadTimeout }).should('be.enabled');
+    cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
     cy.removeSample();
 
     // Sample cell no longer shows up
@@ -59,7 +59,7 @@ describe('Sample addition/removal', () => {
 
     // Wait until all files are loaded
     const uploadTimeout = 60 * 1000; // 1 minute;
-    cy.get('[data-test-id="launch-analysis-button"]', { timeout: uploadTimeout }).should('be.enabled');
+    cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
     cy.removeSample();
 
     // Sample cell no longer shows up

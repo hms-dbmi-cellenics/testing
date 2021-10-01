@@ -8,4 +8,4 @@ experiment-ids:
 - f6e0613002157d3855ebf616f43c52bd # Seth Ryth Jones Edinburgh: 4 samples dataset
 - a13b9c0367134a964450ac8e91336cfb # David Waxman: Very big dataset
 # experiment used to test metadata / species
-- 135423f2b1009aa753b0535168364860 # Multisample murine
+- 135423f2b1009aa753b0535168364860 # Metadata test
