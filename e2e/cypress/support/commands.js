@@ -272,7 +272,7 @@ Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {
     message: ['clean project'],
   });
 
-  const projectExists = Cypress.$(`span:contains(${projectName})`).length;
+  const projectExists = Cypress.$(`[data-test-class="data-test-project-card"] span:contains(${projectName})`).length;
 
   if (projectExists) {
     cy.deleteProject(projectName);
