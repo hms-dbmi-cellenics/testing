@@ -71,7 +71,7 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   });
 
   log.snapshot('open-modal');
-  cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
+  cy.get('[data-test-id="create-new-project-button"]').scrollIntoView().click();
   log.snapshot('type-name');
   cy.get('[data-test-id="project-name"]').type(projectName);
 
@@ -263,5 +263,21 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
   });
 
   log.snapshot('qc-completed');
+  log.end();
+});
+
+Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {
+  const log = Cypress.log({
+    displayName: 'Cleaning up previous project',
+    message: ['clean project'],
+  });
+
+  const projectExists = Cypress.$(`[data-test-class="data-test-project-card"] span:contains(${projectName})`).length;
+
+  if (projectExists) {
+    cy.deleteProject(projectName);
+  }
+
+  log.snapshot('project-cleaned-up');
   log.end();
 });
