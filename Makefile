@@ -41,7 +41,7 @@ test-production:
 
 clean: ## Cleans up temporary files
 	@echo "==> Cleaning up node modules ..."
-	@rm -r node_modules
+	@rm -rf node_modules
 	@echo "    [✓]"
 	@echo ""
 
