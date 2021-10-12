@@ -1,6 +1,5 @@
 /// <reference types="cypress" />
 import '../../support/commands';
-import successResponse from '../../fixtures/successResponse.json';
 
 const resizeObserverLoopErrRe = /ResizeObserver loop limit exceeded/;
 const projectName = 'Pequeninos Sample';
@@ -15,7 +14,7 @@ describe('Creates a new project when authenticated', () => {
     // Intercept PUT/DELETE calls to */project/* endpoing
     cy.intercept(
       {
-        method: 'PUT',
+        method: 'POST',
         url: '*/projects/*',
       },
     ).as('newProject');
@@ -42,14 +41,6 @@ describe('Creates a new project when authenticated', () => {
   it('creates a new project', () => {
     cy.createProject(projectName, projectDescription);
 
-    // check that req/response are correct
-    cy.wait('@newProject').should(({ request, response }) => {
-      expect(request.method).to.equal('PUT');
-      expect(request.body).to.have.property('name', projectName);
-      expect(request.body).to.have.property('description', projectDescription);
-      expect(response.body).to.deep.equal(successResponse);
-    });
-
     // Check that the current active project contains the project title & description
     cy.get('#project-details').should(($p) => {
       expect($p).to.contain(projectName);
@@ -68,11 +59,5 @@ describe('Creates a new project when authenticated', () => {
 
     // Make sure that the projectName is no longer in the project's list
     cy.get('[data-test-class=data-test-project-card]').contains(projectName).should('not.exist');
-
-    // check that req/response are correct
-    cy.wait('@deleteProject').should(({ request, response }) => {
-      expect(request.method).to.equal('DELETE');
-      expect(response.body).to.deep.equal(successResponse);
-    });
   });
 });
