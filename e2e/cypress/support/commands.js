@@ -1,9 +1,10 @@
-import { Auth } from 'aws-amplify';
 import 'cypress-wait-until';
 import 'cypress-localstorage-commands';
 
-import { addFileActions } from '../constants';
 import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
+
+import { Auth } from 'aws-amplify';
+import { addFileActions } from '../constants';
 
 Cypress.Commands.add('login', () => {
   const username = Cypress.env('E2E_USERNAME'); // you should set the CYPRESS_E2E_USERNAME env variable
@@ -71,7 +72,9 @@ Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   });
 
   log.snapshot('open-modal');
-  cy.get('[data-test-id="create-new-project-button"]').scrollIntoView().click();
+  // we use force true because if there are no projects in the list the modal will
+  // be already opened and would fail otherwise.
+  cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
   log.snapshot('type-name');
   cy.get('[data-test-id="project-name"]').type(projectName);
 
