@@ -8,8 +8,9 @@ on:
         required: true
         default: 'production'
       ref:
-        description: 'By default the script runs the latest tag when the environment is production, and latest branch commit otherwise.
-         Set this variable to override that behavior and run a specific ref regardless of the environment.'
+        description: |-
+          By default the script runs the latest tag when the environment is production, and latest branch commit otherwise.
+          Set this variable to override that behavior and run a specific ref regardless of the environment.
         required: false
         default: ''
       sandboxId: 
@@ -29,6 +30,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      
+      - id: logging
+        name: Log inputs
+        run: |-
+          echo "Action inputs: ${INPUT}"
+        env:
+          INPUT: ${{ github.event.inputs }}
 
       - id: checkout-correct-ref
         name: Check out the correct test code ref
@@ -114,7 +122,7 @@ jobs:
 
       - id: send-to-slack
         name: Send failure notification to Slack
-        if: failure()  && github.event.inputs.environment == 'production' && github.event.inputs.ref == '' # just notify of failures for production nightly build
+        if: failure() && github.event.inputs.environment == 'production' && github.event.inputs.ref == '' # just notify of failures for production nightly build
         env:
           SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
         uses: voxmedia/github-action-slack-notify-build@v1
