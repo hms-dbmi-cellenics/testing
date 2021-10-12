@@ -32,11 +32,10 @@ jobs:
           fetch-depth: 0
       
       - id: logging
-        name: Log inputs
-        run: |-
-          echo "Action inputs: ${INPUT}"
+      - name: Log GitHub input context
         env:
-          INPUT: toJSON(${{ github.event.inputs }})
+          GITHUB_INPUTS: ${{ toJSON(github.event.inputs) }}
+        run: echo "$GITHUB_INPUTS"
 
       - id: checkout-correct-ref
         name: Check out the correct test code ref
