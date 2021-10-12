@@ -237,7 +237,7 @@ Cypress.Commands.add('waitForGem2s', (timeout) => {
     message: 'Waiting for GEM2S to complete',
   });
 
-  cy.contains('We\'re launching your analysis...', { timeout });
+  cy.contains('We\'re launching your analysis...', { timeout: 60000 }); // wait for 1 minute
   log.snapshot('gem2s-runs');
 
   cy.contains('.data-test-page-header', 'Data Processing', { timeout }).should('exist');
