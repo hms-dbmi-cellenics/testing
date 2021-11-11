@@ -1,9 +1,8 @@
 import 'cypress-wait-until';
 import 'cypress-localstorage-commands';
 
-import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
-
 import { Auth } from 'aws-amplify';
+import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
 import { addFileActions } from '../constants';
 
 Cypress.Commands.add('login', () => {
@@ -16,8 +15,6 @@ Cypress.Commands.add('login', () => {
     autoEnd: false,
   });
 
-  log.snapshot('before');
-
   const awsConfig = {
     aws_user_pools_id: Cypress.env('userPoolId'),
     aws_user_pools_web_client_id: Cypress.env('clientId'),
@@ -26,7 +23,7 @@ Cypress.Commands.add('login', () => {
 
   const signIn = Auth.signIn({ username, password });
 
-  cy.wrap(signIn, { log: false }).then((cognitoResponse) => {
+  cy.wrap(signIn, { log: false, timeout: 10000 }).then((cognitoResponse) => {
     cy.log(cognitoResponse);
 
     const keyPrefixWithUsername = `${cognitoResponse.keyPrefix}.${cognitoResponse.username}`;
@@ -59,109 +56,60 @@ Cypress.Commands.add('login', () => {
     cy.setLocalStorage('amplify-authenticator-authState', 'signedIn');
     cy.setLocalStorage('amplify-signin-with-hostedUI', 'true');
 
-    log.snapshot('after');
     log.end();
   });
 });
 
 Cypress.Commands.add('createProject', (projectName, projectDescription) => {
-  const log = Cypress.log({
-    displayName: 'Creating Project',
-    message: [`🔐 Creating project named ${projectName}`],
-    autoEnd: false,
-  });
+  cy.log(`Creating project with name ${projectName}.`);
 
-  log.snapshot('open-modal');
   // we use force true because if there are no projects in the list the modal will
   // be already opened and would fail otherwise.
   cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
-  log.snapshot('type-name');
   cy.get('[data-test-id="project-name"]').type(projectName);
 
   if (projectDescription) {
-    log.snapshot('type-description');
     cy.get('[data-test-id="project-description"]').type(projectDescription);
   }
 
   cy.get('[data-test-id="confirm-create-new-project"]').click({ force: true });
-  log.end();
 });
 
 Cypress.Commands.add('deleteProject', (projectName) => {
-  const log = Cypress.log({
-    displayName: 'Deleting Project',
-    message: [`🔐 Deleting project named ${projectName}`],
-    autoEnd: false,
-  });
+  cy.log(`Deleting project with name ${projectName}.`);
 
   cy.contains('[data-test-class="data-test-project-card"]', projectName)
     .within(() => (
       cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
     ));
 
-  log.snapshot('opened-delete-modal');
-
   cy.get('[data-test-id="data-test-delete-project-input"]').type(projectName);
   cy.contains('Permanently delete project').click();
-  log.end();
 });
 
 Cypress.Commands.add('selectProject', (projectName, waitForProjectToAppear = true) => {
-  const log = Cypress.log({
-    displayName: 'Selecting project',
-    message: [`🔐 Selecting project named ${projectName}`],
-    autoEnd: false,
-  });
-
+  cy.log(`Selecting project with name ${projectName}`);
   cy.contains('[data-test-class="data-test-project-card"]', projectName).click({ force: !waitForProjectToAppear });
-
-  log.end();
 });
 
 Cypress.Commands.add('addMetadata', () => {
-  const log = Cypress.log({
-    displayName: 'Adding metadata',
-    message: ['🔐 Adding metadata track'],
-    autoEnd: false,
-  });
+  cy.log('Adding metadata track.');
 
   cy.contains('button', 'Add metadata').click();
-
-  log.snapshot('opened-add-metadata-popover');
-
   cy.contains('.ant-popover', 'Provide new metadata track name').find('.anticon-check').click();
-
-  log.snapshot('closed-add-metadata-popover');
-
-  log.end();
 });
 
 Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
-  const log = Cypress.log({
-    displayName: 'Delete metadata',
-    message: [`🔐 Deleting metadata track named ${metadataTrackName}`],
-    autoEnd: false,
-  });
-
+  cy.log(`Deleting metadata track named ${metadataTrackName}`);
   cy.contains('.ant-table-cell', 'Track 1').find('.anticon-delete').click();
-
-  log.snapshot('deleted-metadata');
-
-  log.end();
 });
 
 // IMPORTANT only works with files that are uncompressed, gem2s fails with compressed files
 // (probably due to file sizes wrong calculation, if we consider this should be fixed
 // the work should probably be done in the forked repo cypress-file-upload)
 Cypress.Commands.add('addSample', (addFileAction) => {
-  const log = Cypress.log({
-    displayName: 'Adding sample',
-    message: ['🔐 Adding sample files'],
-    autoEnd: false,
-  });
-
+  cy.log('Adding sample files.');
   cy.get('[data-test-id="add-samples-button"]').click({ force: true });
-  log.snapshot('opened-add-samples-modal');
 
   const filesToAdd = ['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv'];
 
@@ -171,72 +119,39 @@ Cypress.Commands.add('addSample', (addFileAction) => {
     selectFilesFromInput(filesToAdd);
   }
 
-  log.snapshot('added-samples-files');
-
   cy.get('[data-test-id="file-upload-button"]').click();
-  log.snapshot('uploaded-samples-files');
 });
 
 Cypress.Commands.add('removeSample', () => {
-  const log = Cypress.log({
-    displayName: 'Removing sample',
-    message: ['🔐 Removing sample'],
-    autoEnd: false,
-  });
+  cy.log('Removing sample.');
 
   cy.contains('.data-test-sample-in-table-name', 'WT1')
     .within(() => (
       cy.get('[data-test-class="data-test-delete-editable-field-button"]').click({ force: true })
     ));
-
-  log.snapshot('uploaded-samples-files');
 });
 
 Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
-  const log = Cypress.log({
-    displayName: 'Modifying sample name',
-    message: ['Modifying sample name to ensure GEM2S and QC launch'],
-    autoEnd: false,
-  });
-
+  cy.log('Randomizing sample names.');
   const randomSampleName = `Test-${Math.round(Math.random() * 10000)}`;
 
   // eq(samplePosition) because the 1st cell (index 0) is the header
   cy.get('.data-test-sample-cell').eq(samplePosition).then(($sample) => {
     cy.wrap($sample).find('.anticon-edit').click();
-    log.snapshot('editing-sample-name');
-
     cy.wrap($sample).find('input').type('{selectall}{backspace}').type(randomSampleName);
-    log.snapshot('edited-sample-name');
-
     cy.wrap($sample).find('.anticon-check').click();
-    log.snapshot('save-new-sample-name');
   });
-
-  log.end();
 });
 
 Cypress.Commands.add('waitForGem2s', (timeout) => {
-  const log = Cypress.log({
-    displayName: 'GEM2S',
-    message: 'Waiting for GEM2S to complete',
-  });
-
+  cy.log('Waiting for GEM2S to complete...');
   cy.contains('We\'re launching your analysis...', { timeout: 60000 }); // wait for 1 minute
-  log.snapshot('gem2s-runs');
 
   cy.contains('.data-test-page-header', 'Data Processing', { timeout }).should('exist');
-
-  log.snapshot('data-processing');
-  log.end();
 });
 
 Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
-  const log = Cypress.log({
-    displayName: 'QC',
-    message: 'Waiting for QC to complete',
-  });
-
+  cy.log('Waiting for QC to complete...');
   cy.waitUntil(() => {
     cy.get('span[data-test-id="qc-status-text"]').then(
       ($text) => {
@@ -249,23 +164,13 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
     timeout,
     interval: 5000,
   });
-
-  log.snapshot('qc-completed');
-  log.end();
 });
 
 Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {
-  const log = Cypress.log({
-    displayName: 'Cleaning up previous project',
-    message: ['clean project'],
-  });
-
+  cy.log('Cleaning up project if necessary...');
   const projectExists = Cypress.$(`[data-test-class="data-test-project-card"] span:contains(${projectName})`).length;
 
   if (projectExists) {
     cy.deleteProject(projectName);
   }
-
-  log.snapshot('project-cleaned-up');
-  log.end();
 });
