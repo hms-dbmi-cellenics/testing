@@ -216,21 +216,6 @@ Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
   log.end();
 });
 
-Cypress.Commands.add('launchAnalysis', () => {
-  const log = Cypress.log({
-    displayName: 'Launching analysis',
-    message: ['launch analysis'],
-    autoEnd: false,
-  });
-
-  cy.get('[data-test-id="process-project-button"]').click();
-  log.snapshot('process-project-popup');
-
-  cy.get('[data-test-id="confirm-process-project-button"]').click();
-  log.snapshot('process-project');
-  log.end();
-});
-
 Cypress.Commands.add('waitForGem2s', (timeout) => {
   const log = Cypress.log({
     displayName: 'GEM2S',

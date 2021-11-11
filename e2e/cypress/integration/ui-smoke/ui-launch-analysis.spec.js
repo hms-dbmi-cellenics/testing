@@ -54,8 +54,20 @@ describe('Launches analysis successfully', () => {
   });
 
   it('launches analysis and waits for completion', () => {
-    cy.launchAnalysis();
-    cy.waitForGem2s(gem2sTimeOut);
-    cy.waitForQc(qcTimeOut);
+    const log = Cypress.log({
+      displayName: 'Launching analysis',
+      message: ['launch analysis'],
+      autoEnd: false,
+    });
+  
+    cy.get('[data-test-id="process-project-button"]').click();
+    log.snapshot('process-project-popup');
+  
+    cy.get('[data-test-id="confirm-process-project-button"]').click();
+    log.snapshot('process-project');
+    log.end();
+
+    // cy.waitForGem2s(gem2sTimeOut);
+    // cy.waitForQc(qcTimeOut);
   });
 });
