@@ -53,11 +53,8 @@ describe('Launches analysis successfully', () => {
     cy.randomizeSampleName(1);
   });
 
-  it('launches analysis', () => {
+  it('launches analysis and waits for completion', () => {
     cy.launchAnalysis();
-  });
-
-  it('completes gem2s and pipeline successfully', () => {
     cy.waitForGem2s(gem2sTimeOut);
     cy.waitForQc(qcTimeOut);
   });
