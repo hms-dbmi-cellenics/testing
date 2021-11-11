@@ -11,7 +11,7 @@ describe('Launches analysis successfully', () => {
   //   1. set up the network intercepts
   //   2. Log in into biomage
   //   3. Visit data-management
-  beforeEach(() => {
+  before(() => {
     // Intercept GET calls to */projects/* endpoint
     cy.intercept(
       {
