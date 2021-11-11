@@ -16,7 +16,7 @@ describe('Launches analysis successfully', () => {
   Cypress.on('uncaught:exception', () => false);
 
   it('Can pre-process project from scratch', () => {
-    cy.selectProject(projectName);
+    cy.selectProject(projectName, false);
     cy.randomizeSampleName(1);
 
     cy.log('Launching analysis.');
@@ -28,7 +28,7 @@ describe('Launches analysis successfully', () => {
   });
 
   it('Can explore processed data', () => {
-    cy.selectProject(projectName);
+    cy.selectProject(projectName, false);
 
     cy.log('Moving to Data Processing.');
     cy.get('button:contains("Go to Data Processing")').click();
