@@ -40,20 +40,25 @@ describe('Launches analysis successfully', () => {
     return true;
   });
 
-  it('launches analysis', () => {
-    // Wait for project to load
+  it('loads projects', () => {
     cy.wait('@getProjects');
+  });
 
+  it('selects projects', () => {
     cy.selectProject(projectName, false);
-
     cy.wait('@getExperiment');
+  });
 
+  it('makes changes to project', () => {
     cy.randomizeSampleName(1);
+  });
 
+  it('launches analysis', () => {
     cy.launchAnalysis();
+  });
 
+  it('completes gem2s and pipeline successfully', () => {
     cy.waitForGem2s(gem2sTimeOut);
-
     cy.waitForQc(qcTimeOut);
   });
 });
