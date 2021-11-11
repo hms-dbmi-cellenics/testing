@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const {
   CognitoIdentityProviderClient,
   ListUserPoolsCommand,
@@ -8,6 +9,9 @@ const { getDefaultRoleAssumerWithWebIdentity } = require('@aws-sdk/client-sts');
 const { fromTokenFile } = require('@aws-sdk/credential-provider-web-identity');
 
 module.exports = async (on, config) => {
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  require('cypress-terminal-report/src/installLogsPrinter')(on, { printLogsToConsole: 'always' });
+
   let additionalClientParams = {};
   if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV) {
     additionalClientParams = {
