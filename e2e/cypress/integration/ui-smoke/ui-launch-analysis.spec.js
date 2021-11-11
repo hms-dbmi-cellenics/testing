@@ -12,6 +12,11 @@ describe('Launches analysis successfully', () => {
   //   2. Log in into biomage
   //   3. Visit data-management
   before(() => {
+    cy.login();
+    cy.visit('/data-management');
+  });
+
+  beforeEach(() => {
     // Intercept GET calls to */projects/* endpoint
     cy.intercept(
       {
@@ -27,9 +32,6 @@ describe('Launches analysis successfully', () => {
         url: '**/experiments',
       },
     ).as('getExperiment');
-
-    cy.login();
-    cy.visit('/data-management');
   });
 
   // we have some kind of resize observer loop error that needs looking into
