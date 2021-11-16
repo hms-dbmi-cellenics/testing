@@ -75,6 +75,7 @@ jobs:
         run: |-
           aws eks update-kubeconfig --name biomage-$ENV
           echo "* * * * * kubectl scale --replicas 2 deploy worker --namespace worker-default" | crontab -
+          kubectl scale --replicas 3 deploy worker --namespace worker-default
         env:
           ENV: ${{ github.event.inputs.environment }}
 

@@ -39,32 +39,32 @@ describe('Launches analysis successfully', () => {
     });
   });
 
-  // it('adds sample', () => {
-  //   cy.selectProject(projectName, false);
-  //   cy.addSample('WT1', addFileActions.DRAG_AND_DROP);
+  it('adds sample', () => {
+    cy.selectProject(projectName, false);
+    cy.addSample('WT1', addFileActions.DRAG_AND_DROP);
 
-  //   cy.log('Wait until sample shows up.');
-  //   cy.contains('.data-test-sample-in-table-name', 'WT1', { timeout: 10000 }).should('exist');
+    cy.log('Wait until sample shows up.');
+    cy.contains('.data-test-sample-in-table-name', 'WT1', { timeout: 10000 }).should('exist');
 
-  //   cy.addSample('pbmc1kfiltered', addFileActions.DRAG_AND_DROP);
+    cy.addSample('pbmc1kfiltered', addFileActions.DRAG_AND_DROP);
 
-  //   cy.log('Wait until sample shows up.');
-  //   cy.contains('.data-test-sample-in-table-name', 'pbmc1kfiltered', { timeout: 10000 }).should('exist');
+    cy.log('Wait until sample shows up.');
+    cy.contains('.data-test-sample-in-table-name', 'pbmc1kfiltered', { timeout: 10000 }).should('exist');
 
-  //   cy.log('Wait until all files are loaded.');
-  //   const uploadTimeout = 60 * 1000;
-  //   cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
-  // });
+    cy.log('Wait until all files are loaded.');
+    const uploadTimeout = 60 * 1000;
+    cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
+  });
 
-  // it('adds metadata', () => {
-  //   cy.selectProject(projectName, false);
-  //   cy.addMetadata('testMetadataName');
+  it('adds metadata', () => {
+    cy.selectProject(projectName, false);
+    cy.addMetadata('testMetadataName');
 
-  //   cy.log('Check that the current active project contains the metadata track.');
-  //   cy.get('.ant-table-container').should((antTableContainer) => {
-  //     expect(antTableContainer).to.contain('Track 1');
-  //   });
-  // });
+    cy.log('Check that the current active project contains the metadata track.');
+    cy.get('.ant-table-container').should((antTableContainer) => {
+      expect(antTableContainer).to.contain('Track 1');
+    });
+  });
 
   // it('Can pre-process project from scratch', () => {
   //   cy.selectProject(projectName, false);
