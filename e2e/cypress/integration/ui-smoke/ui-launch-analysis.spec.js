@@ -1,10 +1,13 @@
 /// <reference types="cypress" />
 import '../../support/commands';
+import { addFileActions } from '../../constants';
 
-const projectName = 'IntTest - Add Metadata Project';
 const gem2sTimeOut = (60 * 1000) * 20; // 20 minutes
 const qcTimeOut = (60 * 1000) * 20; // 20 minutes
 const explorationTimeout = (60 * 1000) * 3; // 3 minutes
+
+const projectName = `Integration test ${+ new Date()}`;
+const projectDescription = 'Tissue sample from varelse species known as pequeninos.';
 
 describe('Launches analysis successfully', () => {
   beforeEach(() => {
@@ -13,7 +16,55 @@ describe('Launches analysis successfully', () => {
     cy.visit('/data-management');
   });
 
+  after(() => {
+    cy.visit('/data-management');
+    cy.selectProject(projectName, false);
+    cy.cleanUpProjectIfNecessary(projectName);
+  })
+
   Cypress.on('uncaught:exception', () => false);
+
+  it(`creates a new project (${projectName})`, () => {
+    cy.createProject(projectName, projectDescription);
+
+    cy.log('Check that current active project is correct.');
+    cy.get('#project-details').should(($p) => {
+      expect($p).to.contain(projectName);
+      expect($p).to.contain(projectDescription);
+    });
+
+    cy.log('Check that project list contains our project.');
+    cy.get('[data-test-class=data-test-project-card]').should(($p) => {
+      expect($p).to.contain(projectName);
+    });
+  });
+
+  it('adds sample', () => {
+    cy.selectProject(projectName, false);
+    cy.addSample('WT1', addFileActions.DRAG_AND_DROP);
+
+    cy.log('Wait until sample shows up.');
+    cy.contains('.data-test-sample-in-table-name', 'WT1', { timeout: 10000 }).should('exist');
+
+    cy.addSample('pbmc1kfiltered', addFileActions.DRAG_AND_DROP);
+
+    cy.log('Wait until sample shows up.');
+    cy.contains('.data-test-sample-in-table-name', 'pbmc1kfiltered', { timeout: 10000 }).should('exist');
+
+    cy.log('Wait until all files are loaded.');
+    const uploadTimeout = 60 * 1000;
+    cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
+  });
+
+  it('adds metadata', () => {
+    cy.selectProject(projectName, false);
+    cy.addMetadata('testMetadataName');
+
+    cy.log('Check that the current active project contains the metadata track.');
+    cy.get('.ant-table-container').should((antTableContainer) => {
+      expect(antTableContainer).to.contain('Track 1');
+    });
+  });
 
   it('Can pre-process project from scratch', () => {
     cy.selectProject(projectName, false);
@@ -46,4 +97,5 @@ describe('Launches analysis successfully', () => {
     cy.contains(/(We're getting your data|This will take a few minutes)/, { timeout: explorationTimeout }).should('not.exist');
     cy.get('button:contains("Try again")').should('not.exist');
   });
+
 });

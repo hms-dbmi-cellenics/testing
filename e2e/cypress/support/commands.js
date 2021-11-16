@@ -107,11 +107,11 @@ Cypress.Commands.add('deleteMetadata', (metadataTrackName = 'Track 1') => {
 // IMPORTANT only works with files that are uncompressed, gem2s fails with compressed files
 // (probably due to file sizes wrong calculation, if we consider this should be fixed
 // the work should probably be done in the forked repo cypress-file-upload)
-Cypress.Commands.add('addSample', (addFileAction) => {
-  cy.log('Adding sample files.');
+Cypress.Commands.add('addSample', (sample, addFileAction) => {
+  cy.log(`Adding sample files for ${sample}`);
   cy.get('[data-test-id="add-samples-button"]').click({ force: true });
 
-  const filesToAdd = ['WT1/matrix.mtx', 'WT1/barcodes.tsv', 'WT1/features.tsv'];
+  const filesToAdd = [`${sample}/matrix.mtx`, `${sample}/barcodes.tsv`, `${sample}/features.tsv`];
 
   if (addFileAction === addFileActions.DRAG_AND_DROP) {
     dragAndDropFiles(filesToAdd);
@@ -160,10 +160,10 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
     );
     return cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps);
   },
-  {
-    timeout,
-    interval: 5000,
-  });
+    {
+      timeout,
+      interval: 5000,
+    });
 });
 
 Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {
