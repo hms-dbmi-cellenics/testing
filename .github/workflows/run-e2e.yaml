@@ -74,8 +74,7 @@ jobs:
         name: Set up Kubernetes credentials.
         run: |-
           aws eks update-kubeconfig --name biomage-$ENV
-
-          (crontab -l; echo "30 0 * * * ls") | awk '!x[$0]++' | crontab -
+          echo "* * * * * kubectl scale --replicas 2 deploy worker --namespace worker-default" | crontab -
         env:
           ENV: ${{ github.event.inputs.environment }}
 
