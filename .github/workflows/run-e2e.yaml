@@ -55,22 +55,6 @@ jobs:
           REF: ${{ github.event.inputs.ref }}
           ENV: ${{ github.event.inputs.environment }}
 
-      - id: checkout-biomage-utils
-        if: github.event.inputs.environment == 'staging'
-        name: Check out Biomage utils
-        uses: actions/checkout@v2
-        with:
-          repository: 'biomage-ltd/biomage-utils'
-          path: 'biomage-utils'
-
-      - id: setup-biomage-utils
-        if: github.event.inputs.environment == 'staging'
-        name: Setup Biomage utils
-        run: |-
-          cd biomage-utils/
-          make install
-          make test
-
       - id: setup-aws
         name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -79,34 +63,21 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      - id: install-yq-jq
-        if: github.event.inputs.environment == 'staging'
-        name: Install yq and jq to parse config file
-        run: |-
-          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64
-          sudo add-apt-repository ppa:rmescandon/yq
-          sudo apt update
-          sudo apt install yq -y
-          sudo apt-get install jq -y
-
-      - id: copy-experiments
-        if: github.event.inputs.environment == 'staging'
-        name: Copy experiments
-        run: |-
-          cd biomage-utils/
-          for EXP_ID in $(yq e '.experiment-ids' ../config.yaml -j | jq '.[]')
-          do
-            biomage experiment copy -e $(echo $EXP_ID | sed s'/"//g')
-          done
-        env:
-          BIOMAGE_EMAIL: ${{ secrets.CYPRESS_E2E_USERNAME }}
-
       - id: install
         name: Install dependencies
         run: |-
           cd e2e/
           git config --global url."https://".insteadOf ssh://
           npm ci
+
+      - id: set-up-creds
+        name: Set up Kubernetes credentials.
+        run: |-
+          aws eks update-kubeconfig --name biomage-$ENV
+
+          (crontab -l; echo "30 0 * * * ls") | awk '!x[$0]++' | crontab -
+        env:
+          ENV: ${{ github.event.inputs.environment }}
 
       - id: test
         name: Run e2e tests

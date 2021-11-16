@@ -6,8 +6,8 @@ import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
 import { addFileActions } from '../constants';
 
 Cypress.Commands.add('login', () => {
-  const username = Cypress.env('E2E_USERNAME'); // you should set the CYPRESS_E2E_USERNAME env variable
-  const password = Cypress.env('E2E_PASSWORD'); // you should set the CYPRESS_E2E_PASSWORD env variable
+  const username = Cypress.env('E2E_USERNAME');
+  const password = Cypress.env('E2E_PASSWORD');
 
   const log = Cypress.log({
     displayName: 'Logging into Cognito',

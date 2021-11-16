@@ -28,6 +28,7 @@ module.exports = async (on, config) => {
       ...additionalClientParams,
     },
   );
+
   const sandboxId = process.env.SANDBOX_ID || 'default';
 
   const { UserPools } = await userPoolClient.send(new ListUserPoolsCommand({ MaxResults: 60 }));
