@@ -91,7 +91,7 @@ describe('Launches analysis successfully', () => {
     cy.get('.ant-menu-item:contains("Data Exploration")').click();
 
     cy.log('Data Exploration page should load.');
-    cy.contains('.data-test-page-header', 'Data Exploration').should('exist');
+    cy.contains('.data-test-page-header', 'Data Exploration', , { timeout: explorationTimeout }).should('exist');
 
     cy.contains(/(We're getting your data|This will take a few minutes)/).should('exist');
     cy.contains(/(We're getting your data|This will take a few minutes)/, { timeout: explorationTimeout }).should('not.exist');
