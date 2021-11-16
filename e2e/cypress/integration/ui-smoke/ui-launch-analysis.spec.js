@@ -85,13 +85,13 @@ describe('Launches analysis successfully', () => {
     cy.get('button:contains("Go to Data Processing")').click();
 
     cy.log('Data Processing page should load.');
-    cy.contains('.data-test-page-header', 'Data Processing').should('exist');
+    cy.contains('.data-test-page-header', 'Data Processing', { timeout: 60 * 1000 }).should('exist');
 
     cy.log('Moving to Data Exploration.');
     cy.get('.ant-menu-item:contains("Data Exploration")').click();
 
     cy.log('Data Exploration page should load.');
-    cy.contains('.data-test-page-header', 'Data Exploration', , { timeout: explorationTimeout }).should('exist');
+    cy.contains('.data-test-page-header', 'Data Exploration', { timeout: 60 * 1000 }).should('exist');
 
     cy.contains(/(We're getting your data|This will take a few minutes)/).should('exist');
     cy.contains(/(We're getting your data|This will take a few minutes)/, { timeout: explorationTimeout }).should('not.exist');
