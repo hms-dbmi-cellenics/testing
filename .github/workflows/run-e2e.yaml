@@ -93,7 +93,7 @@ jobs:
           K8S_ENV: ${{ github.event.inputs.environment || 'production' }} 
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
 
-      - id: scale-and-disable
+      - id: enable-cronjob
         name: Re-enable cronjob
         run: |-
           kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : false }}" --namespace worker-$SANDBOX_ID || true
