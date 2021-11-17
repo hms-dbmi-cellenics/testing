@@ -77,6 +77,34 @@ jobs:
         env:
           ENV: ${{ github.event.inputs.environment }}
 
+      - id: scale-and-disable
+        name: Scale up environment and disable cronjob
+        run: |-
+          cd e2e/
+
+          kubectl scale --replicas 1 deploy worker --namespace worker-$SANDBOX_ID
+          kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
+
+          kubectl scale --replicas 2 deploy pipeline --namespace pipeline-$SANDBOX_ID
+          kubectl patch cronjobs worker-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
+        env:
+          CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
+          CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+          K8S_ENV: ${{ github.event.inputs.environment || 'production' }} 
+          SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
+
+      - id: scale-and-disable
+        name: Re-enable cronjob
+        run: |-
+          kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : false }}" --namespace worker-$SANDBOX_ID || true
+          kubectl patch cronjobs worker-scale-down-job -p "{\"spec\" : {\"suspend\" : false }}" --namespace worker-$SANDBOX_ID || true
+        env:
+          CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
+          CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+          K8S_ENV: ${{ github.event.inputs.environment || 'production' }} 
+          SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
+
+
       - id: test
         name: Run e2e tests
         run: |-
