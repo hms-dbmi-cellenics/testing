@@ -85,7 +85,7 @@ jobs:
           kubectl scale --replicas 1 deploy worker --namespace worker-$SANDBOX_ID
           kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
 
-          kubectl scale --replicas 2 deploy pipeline --namespace pipeline-$SANDBOX_ID
+          kubectl scale --replicas 1 deploy pipeline --namespace pipeline-$SANDBOX_ID
           kubectl patch cronjobs worker-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
