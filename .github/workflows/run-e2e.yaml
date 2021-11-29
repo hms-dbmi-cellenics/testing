@@ -17,6 +17,14 @@ on:
         description: 'If staging, the sandbox id (by default: "default")'
         required: false
         default: 'default'
+      image_sha:
+        description: 'The image SHA to search in the deployment'
+        required: false
+        default: ''
+      namespace:
+        description: 'The namespace to search for deployments'
+        required: false
+        default: ''
   schedule:
     - cron:  '22 2 * * *'
 
@@ -76,6 +84,17 @@ jobs:
           aws eks update-kubeconfig --name biomage-$ENV
         env:
           ENV: ${{ github.event.inputs.environment }}
+
+      - id: ensure-latest-commit-is-deployed
+        name: Ensure staged deployment has the latest commit
+        uses: nick-invision/retry@v2
+        with:
+          timeout_seconds: 10
+          max_attempts: 5
+          retry_on: error
+          command: kubectl get deploy ${{ github.event.inputs.namespace }} --namespace ${{ github.event.inputs.namespace }} -o json | grep ${{ github.event.inputs.image_sha }}
+          # Add jitter to break up correlated events.
+          on_retry_command: sleep $[($RANDOM % 20) + 180]s
 
       - id: scale-and-disable
         name: Scale up environment and disable cronjob
