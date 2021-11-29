@@ -94,7 +94,7 @@ jobs:
           retry_on: error
           command: kubectl get deploy ${{ github.event.inputs.namespace }} --namespace ${{ github.event.inputs.namespace }} -o json | grep ${{ github.event.inputs.image_sha }}
           # Add jitter to break up correlated events.
-          on_retry_command: sleep $[($RANDOM % 20) + 180]s
+          on_retry_command: sleep $(shuf -i 180-190 -n 1)s
 
       - id: scale-and-disable
         name: Scale up environment and disable cronjob
