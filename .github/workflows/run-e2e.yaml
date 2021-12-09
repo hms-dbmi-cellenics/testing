@@ -90,11 +90,11 @@ jobs:
         uses: nick-invision/retry@v2
         with:
           timeout_seconds: 10
-          max_attempts: 15
+          max_attempts: 5
           retry_on: error
           command: kubectl get deploy ${{ github.event.inputs.namespace }} --namespace ${{ github.event.inputs.namespace }} -o json | grep ${{ github.event.inputs.image_sha }}
           # Add jitter to break up correlated events.
-          on_retry_command: sleep $(shuf -i 55-65 -n 1)s
+          on_retry_command: sleep $(shuf -i 180-190 -n 1)s
 
       - id: scale-and-disable
         name: Scale up environment and disable cronjob
@@ -124,6 +124,7 @@ jobs:
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
 
       - id: enable-cronjob
+        if: always()
         name: Re-enable cronjob
         run: |-
           kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : false }}" --namespace worker-$SANDBOX_ID || true
