@@ -34,7 +34,7 @@ a hot-reload functionality to iteratively improve your tests.
 ### Running in production
 
 The tests can be run using GitHub Actions. Navigate to the
-[actions](https://github.com/biomage-ltd/testing/actions)
+[actions](https://github.com/hms-dbmi-cellenics/testing/actions)
 under the repository. You can launch the tests manually for
 each environment.
 
