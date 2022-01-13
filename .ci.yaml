@@ -1,5 +1,4 @@
 ci-policies:
-  DeletionPolicy: Retain
   - PolicyName: "can-read-cognito"
     PolicyDocument:
       Version: "2012-10-17"
