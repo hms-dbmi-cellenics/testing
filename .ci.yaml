@@ -1,4 +1,5 @@
 ci-policies:
+  DeletionPolicy: Retain
   - PolicyName: "can-read-cognito"
     PolicyDocument:
       Version: "2012-10-17"
@@ -83,6 +84,6 @@ ci-policies:
             - "dynamodb:PutItem"
             - "dynamodb:UpdateItem"
           Resource:
-            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/projects-staging"
-            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/experiments-staging"
-            - "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/samples-staging"
+            - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/projects-staging"
+            - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/experiments-staging"
+            - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/samples-staging"
