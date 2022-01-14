@@ -6,7 +6,7 @@ const gem2sTimeOut = (60 * 1000) * 20; // 20 minutes
 const qcTimeOut = (60 * 1000) * 20; // 20 minutes
 const explorationTimeout = (60 * 1000) * 3; // 3 minutes
 
-const projectName = `Integration test ${+ new Date()}`;
+const projectName = `Integration test ${+new Date()}`;
 const projectDescription = 'Tissue sample from varelse species known as pequeninos.';
 
 describe('Launches analysis successfully', () => {
@@ -20,7 +20,7 @@ describe('Launches analysis successfully', () => {
     cy.visit('/data-management');
     cy.selectProject(projectName, false);
     cy.cleanUpProjectIfNecessary(projectName);
-  })
+  });
 
   Cypress.on('uncaught:exception', () => false);
 
@@ -56,7 +56,7 @@ describe('Launches analysis successfully', () => {
     cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
   });
 
-  it('adds metadata', () => {
+  it('adds and randomizes metadata', () => {
     cy.selectProject(projectName, false);
     cy.addMetadata('testMetadataName');
 
@@ -64,6 +64,7 @@ describe('Launches analysis successfully', () => {
     cy.get('.ant-table-container').should((antTableContainer) => {
       expect(antTableContainer).to.contain('Track 1');
     });
+    cy.changeMetadataNames(0);
   });
 
   it('Can pre-process project from scratch', () => {

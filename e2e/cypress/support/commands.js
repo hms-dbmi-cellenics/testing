@@ -143,6 +143,14 @@ Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
   });
 });
 
+Cypress.Commands.add('changeMetadataNames', (metadataPosition) => {
+  cy.log('Randomizing metadata values.');
+
+  cy.get('.anticon-format-painter').eq(metadataPosition).click();
+  cy.get('.ant-popover-content').find('input').type('{selectall}{backspace}').type(`TestValue-${Math.round(Math.random() * 10000)}`);
+  cy.contains('button', 'Fill all missing').click();
+});
+
 Cypress.Commands.add('waitForGem2s', (timeout) => {
   cy.log('Waiting for GEM2S to complete...');
   cy.contains('We\'re launching your analysis...', { timeout: 60000 }); // wait for 1 minute
