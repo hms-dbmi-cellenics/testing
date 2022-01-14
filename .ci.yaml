@@ -11,6 +11,16 @@ ci-policies:
             - "cognito-idp:DescribeUserPool"
             - "cognito-idp:DescribeUserPoolClient"
           Resource: '*'
+  - PolicyName: "can-access-cluster"
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Action:
+            - "eks:DescribeCluster"
+          Resource:
+            - !Sub "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/biomage-staging"
+            - !Sub "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/biomage-production"
 
   # Permissions to run biomage-utils in CI
   - PolicyName: "can-list-objects-in-prodution-buckets"
