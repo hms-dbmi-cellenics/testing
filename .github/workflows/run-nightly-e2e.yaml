@@ -3,6 +3,7 @@ name: Run nightly end-to-end test
 on:
   schedule:
     - cron:  '22 2 * * *'
+  workflow_dispatch:
 
 env:
   ENV: 'production'
