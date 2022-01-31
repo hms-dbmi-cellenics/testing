@@ -1,0 +1,51 @@
+name: Run nightly end-to-end test
+
+on:
+  schedule:
+    - cron:  '22 2 * * *'
+
+env:
+  ENV: 'production'
+
+jobs:
+  run-e2e:
+    name: 'Run nightly e2e tests against production'
+    runs-on: ubuntu-20.04
+    steps:
+      - id: checkout
+        name: Check out source code
+        uses: actions/checkout@v2
+
+      - id: setup-aws
+        name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - id: install
+        name: Install dependencies
+        run: |-
+          cd e2e/
+          git config --global url."https://".insteadOf ssh://
+          npm ci
+
+      - id: test
+        name: Run e2e tests
+        run: |-
+          cd e2e/
+          npm start
+        env:
+          CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
+          CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+
+      - id: send-to-slack
+        name: Send failure notification to Slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: pipelines
+          status: FAILED
+          color: danger
