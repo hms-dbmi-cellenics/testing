@@ -3,8 +3,9 @@ name: Run nightly end-to-end test
 on:
   schedule:
     - cron:  '22 2 * * *'
-  # AGI DDN'T FORGET TO REMOVE THIS!!!
-  workflow_dispatch:
+
+env:
+  K8S_ENV: 'production'
 
 jobs:
   run-e2e:
