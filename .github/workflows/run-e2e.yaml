@@ -13,7 +13,7 @@ on:
           Set this variable to override that behavior and run a specific ref regardless of the environment.
         required: false
         default: ''
-      sandboxId: 
+      sandboxId:
         description: 'If staging, the sandbox id (by default: "default")'
         required: false
         default: 'default'
@@ -25,8 +25,6 @@ on:
         description: 'The namespace to search for deployments'
         required: false
         default: ''
-  schedule:
-    - cron:  '22 2 * * *'
 
 jobs:
   run-e2e:
@@ -38,7 +36,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      
+
       - id: logging
         name: Log GitHub input context
         env:
@@ -48,13 +46,13 @@ jobs:
       - id: checkout-correct-ref
         name: Check out the correct test code ref
         run: |-
-          # if we are in production check out the latest tag for the nightly build
+          # if ENV is set to production check out the latest tag for the nightly build
           if [ "$ENV" = "production" ] && [ "$REF" = "" ]; then
             latesttag=$(git describe --tags --abbrev=0)
             echo "Checking out ${latesttag}"
             git checkout ${latesttag}
           fi
-          # # if any ref was provided check it out
+          # if any ref was provided check it out
           if [ "$REF" != "" ]; then
             echo "Checking out $REF"
             git checkout $REF
@@ -109,7 +107,7 @@ jobs:
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
-          K8S_ENV: ${{ github.event.inputs.environment || 'production' }} 
+          K8S_ENV: ${{ github.event.inputs.environment || 'production' }}
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
 
       - id: test
@@ -120,7 +118,7 @@ jobs:
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
-          K8S_ENV: ${{ github.event.inputs.environment || 'production' }} 
+          K8S_ENV: ${{ github.event.inputs.environment || 'production' }}
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
 
       - id: enable-cronjob
@@ -132,16 +130,5 @@ jobs:
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
-          K8S_ENV: ${{ github.event.inputs.environment || 'production' }} 
+          K8S_ENV: ${{ github.event.inputs.environment || 'production' }}
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
-
-      - id: send-to-slack
-        name: Send failure notification to Slack
-        if: failure() && github.event.inputs.environment == 'production' && github.event.inputs.ref == '' # just notify of failures for production nightly build
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.BUILD_STATUS_BOT_TOKEN }}
-        uses: voxmedia/github-action-slack-notify-build@v1
-        with:
-          channel: pipelines
-          status: FAILED
-          color: danger
