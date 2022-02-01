@@ -3,6 +3,8 @@ name: Run nightly end-to-end test
 on:
   schedule:
     - cron:  '22 2 * * *'
+
+  # Manual trigger to allow for debugging
   workflow_dispatch:
 
 env:
