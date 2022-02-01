@@ -4,6 +4,9 @@ on:
   schedule:
     - cron:  '22 2 * * *'
 
+  # Manual trigger to allow for debugging
+  workflow_dispatch:
+
 env:
   K8S_ENV: 'production'
 
