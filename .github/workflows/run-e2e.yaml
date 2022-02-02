@@ -113,6 +113,7 @@ jobs:
       - id: test
         name: Run e2e tests
         run: |-
+          echo "Running E2E using $CYPRESS_E2E_USERNAME"
           cd e2e/
           npm start
         env:
