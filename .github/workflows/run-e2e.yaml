@@ -102,27 +102,32 @@ jobs:
           # Check if there are worker and pipeline deployments
           # If not, deploy and wait
 
-          wait_for_deployment="false"
-          ready_worker=$(kubectl get deployment --namespace worker-$SANDBOX_ID -o jsonpath='{.items[0].status.readyReplicas}')
+          WAIT_FOR_DEPLOYMENT="false"
 
-          if [ -z "$ready_worker" ]; then
+          # Get the number of worker deployment replicas
+          WORKER_REPLICAS=$(kubectl get deployment --namespace worker-$SANDBOX_ID -o jsonpath='{.items[0].status.replicas}')
+
+          # If there are no worker replicas, increase the replica count
+          if [ -z "$WORKER_REPLICAS" ]; then
             kubectl scale --replicas 1 deploy worker --namespace worker-$SANDBOX_ID
             kubectl patch cronjobs worker-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
 
-            wait_for_deployment="true"
+            WAIT_FOR_DEPLOYMENT="true"
           fi
 
-          ready_pipeline=$(kubectl get deployment --namespace pipeline-$SANDBOX_ID -o jsonpath='{.items[0].status.readyReplicas}')
+          # Get the number of pipeline deployment replicas
+          PIPELINE_REPLICAS=$(kubectl get deployment --namespace pipeline-$SANDBOX_ID -o jsonpath='{.items[0].status.replicas}')
 
-          if [ -z "$ready_pipeline" ]; then
+          # If there are no pipeline replicas, increase the replica count
+          if [ -z "$PIPELINE_REPLICAS" ]; then
             kubectl scale --replicas 1 deploy pipeline --namespace pipeline-$SANDBOX_ID
             kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace pipeline-$SANDBOX_ID || true
 
-            wait_for_deployment="true"
+            WAIT_FOR_DEPLOYMENT="true"
           fi
 
-          # Wait 5 mins for the pods to spin up before running the test
-          if [ "$wait_for_deployment" = "true" ]; then
+          # If there is a worker or pipeline being scaled up, wait 5 mins for the pods to spin up before running the test
+          if [ "$WAIT_FOR_DEPLOYMENT" = "true" ]; then
             sleep 300s
           fi
         env:
