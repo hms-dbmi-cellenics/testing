@@ -34,7 +34,7 @@ describe('Launches analysis successfully', () => {
     });
 
     cy.log('Check that project list contains our project.');
-    cy.get('[data-test-class=data-test-project-card]').should(($p) => {
+    cy.get('[data-test-class=data-test-project-card]', { timeout: 10000 }).should(($p) => {
       expect($p).to.contain(projectName);
     });
   });
