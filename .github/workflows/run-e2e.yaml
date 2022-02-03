@@ -99,11 +99,32 @@ jobs:
         run: |-
           cd e2e/
 
-          kubectl scale --replicas 1 deploy worker --namespace worker-$SANDBOX_ID
-          kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
+          # Check if there are worker and pipeline deployments
+          # If not, deploy and wait
 
-          kubectl scale --replicas 1 deploy pipeline --namespace pipeline-$SANDBOX_ID
-          kubectl patch cronjobs worker-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
+          wait_for_deployment="false"
+          ready_worker=$(kubectl get deployment --namespace worker-$SANDBOX_ID -o jsonpath='{.items[0].status.readyReplicas}')
+
+          if [ -z "$ready_worker" ]; then
+            kubectl scale --replicas 1 deploy worker --namespace worker-$SANDBOX_ID
+            kubectl patch cronjobs worker-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace worker-$SANDBOX_ID || true
+
+            wait_for_deployment="true"
+          fi
+
+          ready_pipeline=$(kubectl get deployment --namespace pipeline-$SANDBOX_ID -o jsonpath='{.items[0].status.readyReplicas}')
+
+          if [ -z "$ready_pipeline" ]; then
+            kubectl scale --replicas 1 deploy pipeline --namespace pipeline-$SANDBOX_ID
+            kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : true }}" --namespace pipeline-$SANDBOX_ID || true
+
+            wait_for_deployment="true"
+          fi
+
+          # Wait 5 mins for the pods to spin up before running the test
+          if [ "$wait_for_deployment" = "true" ]; then
+            sleep 300s
+          fi
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
@@ -125,7 +146,7 @@ jobs:
         if: always()
         name: Re-enable cronjob
         run: |-
-          kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : false }}" --namespace worker-$SANDBOX_ID || true
+          kubectl patch cronjobs pipeline-scale-down-job -p "{\"spec\" : {\"suspend\" : false }}" --namespace pipeline-$SANDBOX_ID || true
           kubectl patch cronjobs worker-scale-down-job -p "{\"spec\" : {\"suspend\" : false }}" --namespace worker-$SANDBOX_ID || true
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
