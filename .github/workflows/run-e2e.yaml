@@ -126,15 +126,30 @@ jobs:
             WAIT_FOR_DEPLOYMENT="true"
           fi
 
-          # If there is a worker or pipeline being scaled up, wait 5 mins for the pods to spin up before running the test
-          if [ "$WAIT_FOR_DEPLOYMENT" = "true" ]; then
-            sleep 300s
-          fi
+          # Set as output the minified JSON.
+          echo "::set-output name=wait-for-deployment::$(WAIT_FOR_DEPLOYMENT)"
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
           K8S_ENV: ${{ github.event.inputs.environment || 'production' }}
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
+
+      - id: wait-pod-scale-up
+        if: steps.scale-and-disable.outputs.wait-for-deployment == "true"
+        name: Wait and retry until pod scales up
+        uses: nick-invision/retry@v2
+        with:
+          timeout_seconds: 10
+          max_attempts: 7
+          retry_on: error
+          command: |
+            WORKER_REPLICAS=$(kubectl get deployment --namespace worker-$SANDBOX_ID -o jsonpath='{.items[0].status.readyReplicas}')
+            PIPELINE_REPLICAS=$(kubectl get deployment --namespace pipeline-$SANDBOX_ID -o jsonpath='{.items[0].status.readyReplicas}')
+
+            if [ -z "$WORKER_REPLICAS" ] || [ -z "$PIPELINE_REPLICAS" ]; then
+              return 1
+            fi
+          on_retry_command: sleep $(shuf -i 60-70 -n 1)s
 
       - id: test
         name: Run e2e tests
