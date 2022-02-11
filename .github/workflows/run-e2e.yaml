@@ -135,7 +135,7 @@ jobs:
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
 
       - id: wait-pod-scale-up
-        if: steps.scale-and-disable.outputs.wait-for-deployment == "true"
+        if: steps.scale-and-disable.outputs.wait-for-deployment == 'true'
         name: Wait and retry until pod scales up
         uses: nick-invision/retry@v2
         with:
