@@ -127,7 +127,7 @@ jobs:
           fi
 
           # Set as output the minified JSON.
-          echo "::set-output name=wait-for-deployment::$(WAIT_FOR_DEPLOYMENT)"
+          echo "::set-output name=wait-for-deployment::$WAIT_FOR_DEPLOYMENT"
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
