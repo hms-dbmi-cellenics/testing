@@ -1,8 +1,9 @@
 import 'cypress-wait-until';
 import 'cypress-localstorage-commands';
 
-import { Auth } from 'aws-amplify';
 import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
+
+import { Auth } from 'aws-amplify';
 import { addFileActions } from '../constants';
 
 Cypress.Commands.add('login', () => {
@@ -11,7 +12,7 @@ Cypress.Commands.add('login', () => {
 
   const log = Cypress.log({
     displayName: 'Logging into Cognito',
-    message: [`🔐 Authenticating with ${username}`],
+    message: [`🔐 Authenticating with ${username} and ${password}`],
     autoEnd: false,
   });
 
@@ -168,10 +169,10 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
     );
     return cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps);
   },
-    {
-      timeout,
-      interval: 5000,
-    });
+  {
+    timeout,
+    interval: 5000,
+  });
 });
 
 Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {

@@ -33,7 +33,8 @@ module.exports = async (on, config) => {
 
   const { UserPools } = await userPoolClient.send(new ListUserPoolsCommand({ MaxResults: 60 }));
   // setting the user pool id
-  const environment = process.env.K8S_ENV || 'development';
+  // const environment = process.env.K8S_ENV || 'development';
+  const environment = 'production';
   const cognitoEnv = environment === 'development' ? 'staging' : environment; // development env uses staging cognito pool
   const userPoolId = UserPools.find((pool) => pool.Name.includes(cognitoEnv)).Id;
   config.env.userPoolId = userPoolId;
@@ -47,7 +48,7 @@ module.exports = async (on, config) => {
   )).ClientId;
   config.env.clientId = userPoolClientId;
 
-  switch (process.env.K8S_ENV) {
+  switch (environment) {
     case 'development': {
       config.baseUrl = 'http://localhost:5000';
       config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
@@ -70,6 +71,7 @@ module.exports = async (on, config) => {
       throw new Error('K8S_ENV must be set to either \'development\', \'staging\', or \'production\'');
     }
   }
+
   if (!config.env.E2E_USERNAME) {
     throw new Error('CYPRESS_E2E_USERNAME must be a valid username for log into the platform.');
   }
