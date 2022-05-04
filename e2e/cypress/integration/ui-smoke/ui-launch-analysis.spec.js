@@ -17,7 +17,13 @@ describe('Launches analysis successfully', () => {
     cy.visit('/data-management');
   });
 
-  // after(() => {
+  after(() => {
+    cy.url().then((url) => {
+      cy.log(url);
+    });
+    cy.log(cy.url());
+    cy.url();
+  });
   //   cy.visit('/data-management');
   //   cy.selectProject(projectName, false);
   //   cy.cleanUpProjectIfNecessary(projectName);
@@ -28,8 +34,9 @@ describe('Launches analysis successfully', () => {
   it(`creates a new project (${baseProjectName})`, () => {
     // cy.cleanUpProjectIfNecessary(projectName);
     // cy.deleteProject(projectName);
-    const alias = Cypress.env('E2E_ALIAS');
-    const projectName = `${baseProjectName} ${alias}`;
+    // const alias = Cypress.env('E2E_ALIAS');
+    // const projectName = `${baseProjectName} ${alias}`;
+    const projectName = baseProjectName;
     cy.createProject(projectName, projectDescription);
 
     cy.log('Check that current active project is correct.');
@@ -76,7 +83,20 @@ describe('Launches analysis successfully', () => {
     cy.log('Launching analysis.');
     cy.get('button:contains("Process project")').click();
     cy.get('button:contains("Yes")').click();
-
+    // cy.get('button:contains("Yes")').click().then(() => {
+    //   cy.url().then((url) => {
+    //     cy.log(url);
+    //   });
+    // });
+    cy.contains('We\'re launching your analysis...', { timeout: 60000 });
+    // cy.contains('We\'re launching your analysis...', { timeout: 60000 }).then(() => {
+    //   cy.url().then((url) => {
+    //     cy.log(url);
+    //   });
+    // }); // wait for 1 minute
+    // cy.url().then((url) => {
+    //   cy.log(url);
+    // });
     // cy.waitForGem2s(gem2sTimeOut);
     // cy.waitForQc(qcTimeOut);
     // // });
