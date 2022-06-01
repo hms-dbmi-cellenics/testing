@@ -86,6 +86,7 @@ jobs:
       - id: ensure-latest-commit-is-deployed
         name: Ensure staged deployment has the latest commit
         uses: nick-invision/retry@v2
+        if: ${{ github.event.inputs.namespace != '' && github.event.inputs.image_sha != '' }}
         with:
           timeout_seconds: 10
           max_attempts: 5
