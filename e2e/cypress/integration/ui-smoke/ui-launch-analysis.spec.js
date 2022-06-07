@@ -34,9 +34,9 @@ describe('Launches analysis successfully', () => {
   it(`creates a new project (${baseProjectName})`, () => {
     // cy.cleanUpProjectIfNecessary(projectName);
     // cy.deleteProject(projectName);
-    // const alias = Cypress.env('E2E_ALIAS');
-    // const projectName = `${baseProjectName} ${alias}`;
-    const projectName = baseProjectName;
+    const alias = Cypress.env('E2E_ALIAS');
+    const projectName = `${baseProjectName} ${alias}`;
+    // const projectName = baseProjectName;
     cy.createProject(projectName, projectDescription);
 
     cy.log('Check that current active project is correct.');
