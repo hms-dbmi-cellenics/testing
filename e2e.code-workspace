@@ -20,6 +20,7 @@
 			"default": true,
 			"MD034": false,
 			"MD046": false
-		}
+        },
+        "makefile.extensionOutputFolder": "./.vscode"
 	}
 }
