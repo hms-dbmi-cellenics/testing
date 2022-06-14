@@ -1,8 +1,9 @@
 import 'cypress-wait-until';
 import 'cypress-localstorage-commands';
 
-import { Auth } from 'aws-amplify';
 import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
+
+import { Auth } from 'aws-amplify';
 import { addFileActions } from '../constants';
 
 Cypress.Commands.add('login', () => {
@@ -139,7 +140,6 @@ Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
   cy.get('.data-test-sample-cell').eq(samplePosition).then(($sample) => {
     cy.wrap($sample).find('.anticon-edit').click();
     cy.wrap($sample).find('input').type('{selectall}{backspace}').type(randomSampleName);
-    cy.wrap($sample).find('.anticon-check').click();
   });
 });
 
@@ -160,18 +160,20 @@ Cypress.Commands.add('waitForGem2s', (timeout) => {
 
 Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
   cy.log('Waiting for QC to complete...');
-  cy.waitUntil(() => {
-    cy.get('span[data-test-id="qc-status-text"]').then(
-      ($text) => {
-        if ($text.text() === 'failed') throw new Error('QC Step failed');
-      },
-    );
-    return cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps);
-  },
+  cy.waitUntil(
+    () => {
+      cy.get('span[data-test-id="qc-status-text"]').then(
+        ($text) => {
+          if ($text.text() === 'failed') throw new Error('QC Step failed');
+        },
+      );
+      return cy.get('svg[data-test-class="data-test-qc-step-completed"]', { timeout }).should('have.length', numQcSteps);
+    },
     {
       timeout,
       interval: 5000,
-    });
+    },
+  );
 });
 
 Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {
