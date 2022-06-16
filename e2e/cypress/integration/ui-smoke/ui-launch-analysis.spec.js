@@ -3,9 +3,10 @@ import '../../support/commands';
 
 import { addFileActions } from '../../constants';
 
+const uploadTimeout = 3 * 60 * 1000; // 3 minutes
 const gem2sTimeOut = (60 * 1000) * 20; // 20 minutes
 const qcTimeOut = (60 * 1000) * 20; // 20 minutes
-const explorationTimeout = (60 * 1000) * 3; // 3 minutes
+const explorationTimeout = (60 * 1000) * 5; // 5 minutes
 
 const projectName = `Integration test ${+new Date()}`;
 const projectDescription = 'Tissue sample from varelse species known as pequeninos.';
@@ -53,7 +54,6 @@ describe('Launches analysis successfully', () => {
     cy.contains('.data-test-sample-in-table-name', 'pbmc1kfiltered', { timeout: 10000 }).should('exist');
 
     cy.log('Wait until all files are loaded.');
-    const uploadTimeout = 3 * 60 * 1000;
     cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
   });
 
