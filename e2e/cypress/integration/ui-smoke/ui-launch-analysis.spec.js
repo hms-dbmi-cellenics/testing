@@ -16,12 +16,12 @@ describe('Launches analysis successfully', () => {
     Cypress.config('defaultCommandTimeout', 10000);
     cy.login();
     cy.visit('/data-management');
-  });
-
-  after(() => {
-    cy.visit('/data-management');
-    cy.selectProject(projectName, false);
-    cy.cleanUpProjectIfNecessary(projectName);
+    // clean all leftover projects
+    cy.get('[data-test-class=data-test-project-card] span:first', { timeout: 10000 }).each(($el, index, $list) => {
+      const projectName = $el.text();
+      cy.selectProject(projectName, false);
+      cy.cleanUpProjectIfNecessary(projectName);
+    });
   });
 
   Cypress.on('uncaught:exception', () => false);
