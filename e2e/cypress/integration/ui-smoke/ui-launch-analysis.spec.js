@@ -53,7 +53,7 @@ describe('Launches analysis successfully', () => {
     cy.contains('.data-test-sample-in-table-name', 'pbmc1kfiltered', { timeout: 10000 }).should('exist');
 
     cy.log('Wait until all files are loaded.');
-    const uploadTimeout = 60 * 1000;
+    const uploadTimeout = 3 * 60 * 1000;
     cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
   });
 
