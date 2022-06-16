@@ -26,9 +26,9 @@ on:
         required: false
         default: ''
 
-
-# this ensures that we only running one suite of tests per environment
-concurrency: integration-test-${environment}-${sandboxId}
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   run-e2e:
@@ -37,9 +37,14 @@ jobs:
     steps:
       - id: checkout
         name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
 
       - id: logging
         name: Log GitHub input context

@@ -48,10 +48,10 @@ describe('Launches analysis successfully', () => {
     cy.log('Wait until sample shows up.');
     cy.contains('.data-test-sample-in-table-name', 'WT1', { timeout: 10000 }).should('exist');
 
-    cy.addSample('pbmc1kfiltered', addFileActions.DRAG_AND_DROP);
+    cy.addSample('Tumour2', addFileActions.DRAG_AND_DROP);
 
     cy.log('Wait until sample shows up.');
-    cy.contains('.data-test-sample-in-table-name', 'pbmc1kfiltered', { timeout: 10000 }).should('exist');
+    cy.contains('.data-test-sample-in-table-name', 'Tumour2', { timeout: 10000 }).should('exist');
 
     cy.log('Wait until all files are loaded.');
     cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
