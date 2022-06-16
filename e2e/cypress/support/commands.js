@@ -64,10 +64,8 @@ Cypress.Commands.add('login', () => {
 Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   cy.log(`Creating project with name ${projectName}.`);
 
-  // we use force true because if there are no projects in the list the modal will
-  // be already opened and would fail otherwise.
   cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
-  cy.get('[data-test-id="project-name"]').type(projectName);
+  cy.get('[data-test-id="project-name"]', { timeout: 5000 }).type(projectName);
 
   if (projectDescription) {
     cy.get('[data-test-id="project-description"]').type(projectDescription);
@@ -136,11 +134,9 @@ Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
   cy.log('Randomizing sample names.');
   const randomSampleName = `Test-${Math.round(Math.random() * 10000)}`;
 
-  // eq(samplePosition) because the 1st cell (index 0) is the header
-  cy.get('.data-test-sample-cell').eq(samplePosition).then(($sample) => {
-    cy.wrap($sample).find('.anticon-edit').click();
-    cy.wrap($sample).find('input').type('{selectall}{backspace}').type(randomSampleName);
-  });
+  cy.get('.data-test-sample-cell').eq(samplePosition).find('.anticon-edit').click();
+  cy.get('.data-test-sample-cell').eq(samplePosition).find('input').type(`{selectall}{backspace}${randomSampleName}`);
+  cy.get('.data-test-sample-cell').eq(samplePosition).find('.anticon-check').click();
 });
 
 Cypress.Commands.add('changeMetadataNames', (metadataPosition) => {
@@ -176,11 +172,16 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
   );
 });
 
-Cypress.Commands.add('cleanUpProjectIfNecessary', (projectName) => {
-  cy.log('Cleaning up project if necessary...');
-  const projectExists = Cypress.$(`[data-test-class="data-test-project-card"] span:contains(${projectName})`).length;
+Cypress.Commands.add('cleanUpProjectsIfNecessary', () => {
+  cy.log('Cleaning up projects if necessary...');
 
-  if (projectExists) {
-    cy.deleteProject(projectName);
-  }
+  cy.get('body').then(($body) => {
+    if ($body.find('[data-test-class="data-test-project-card"]').length > 0) {
+      cy.get('[data-test-class=data-test-project-card]', { timeout: 10000 }).each(($el, index, $list) => {
+        const projectName = $el.find('span:first', { timeout: 5000 }).text();
+        cy.selectProject(projectName, false);
+        cy.deleteProject(projectName);
+      });
+    }
+  });
 });

@@ -16,12 +16,10 @@ describe('Launches analysis successfully', () => {
     Cypress.config('defaultCommandTimeout', 10000);
     cy.login();
     cy.visit('/data-management');
+
     // clean all leftover projects
-    cy.get('[data-test-class=data-test-project-card] span:first', { timeout: 10000 }).each(($el, index, $list) => {
-      const projectName = $el.text();
-      cy.selectProject(projectName, false);
-      cy.cleanUpProjectIfNecessary(projectName);
-    });
+    cy.log('Cleaning up project if necessary...');
+    cy.cleanUpProjectsIfNecessary(projectName);
   });
 
   Cypress.on('uncaught:exception', () => false);
@@ -39,9 +37,7 @@ describe('Launches analysis successfully', () => {
     cy.get('[data-test-class=data-test-project-card]', { timeout: 10000 }).should(($p) => {
       expect($p).to.contain(projectName);
     });
-  });
 
-  it('adds sample', () => {
     cy.selectProject(projectName, false);
     cy.addSample('WT1', addFileActions.DRAG_AND_DROP);
 
@@ -55,20 +51,14 @@ describe('Launches analysis successfully', () => {
 
     cy.log('Wait until all files are loaded.');
     cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
-  });
 
-  it('adds and randomizes metadata', () => {
     cy.selectProject(projectName, false);
     cy.addMetadata('testMetadataName');
 
     cy.log('Check that the current active project contains the metadata track.');
-    cy.get('.ant-table-container').should((antTableContainer) => {
-      expect(antTableContainer).to.contain('Track 1');
-    });
+    cy.get('.ant-table-container').should('contain', 'Track 1');
     cy.changeMetadataNames(0);
-  });
 
-  it('Can pre-process project from scratch', () => {
     cy.selectProject(projectName, false);
     cy.randomizeSampleName(1);
 
@@ -78,11 +68,8 @@ describe('Launches analysis successfully', () => {
 
     cy.waitForGem2s(gem2sTimeOut);
     cy.waitForQc(qcTimeOut);
-  });
 
-  it('Can explore processed data', () => {
     cy.selectProject(projectName, false);
-
     cy.log('Moving to Data Processing.');
     cy.get('button:contains("Go to Data Processing")').click();
 
