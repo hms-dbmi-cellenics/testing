@@ -26,6 +26,10 @@ on:
         required: false
         default: ''
 
+
+# this ensures that we only running one suite of tests per environment
+concurrency: integration-test-${environment}-${sandboxId}
+
 jobs:
   run-e2e:
     name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment) }}
