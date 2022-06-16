@@ -45,6 +45,7 @@ jobs:
         with:
           node-version: 14
           cache: 'npm'
+          cache-dependency-path: 'e2e'
 
       - id: logging
         name: Log GitHub input context
