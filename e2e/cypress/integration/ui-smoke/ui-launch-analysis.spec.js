@@ -45,7 +45,6 @@ describe('Launches analysis successfully', () => {
     cy.contains('.data-test-sample-in-table-name', 'WT1', { timeout: 10000 }).should('exist');
 
     cy.addSample('Tumour2', addFileActions.DRAG_AND_DROP);
-    // cy.waitUntil(() => cy.get('contains("Loading...")').should('not.exist'));
 
     cy.log('Wait until sample shows up.');
     cy.contains('.data-test-sample-in-table-name', 'Tumour2', { timeout: 10000 }).should('exist');
@@ -53,15 +52,10 @@ describe('Launches analysis successfully', () => {
     cy.log('Wait until all files are loaded.');
     cy.get('[data-test-id="process-project-button"]', { timeout: uploadTimeout }).should('be.enabled');
 
-    // cy.waitUntil(() => cy.get('div:contains("Loading...")').should('not.exist'));
-
-    // cy.selectProject(projectName, false);
     cy.randomizeSampleName(1);
 
     cy.selectProject(projectName, false);
     cy.addMetadata('testMetadataName');
-
-    // cy.waitUntil(() => cy.get('div:contains("Loading...")').should('not.exist'));
 
     cy.log('Check that the current active project contains the metadata track.');
     cy.get('.ant-table-container').should('contain', 'Track 1');
@@ -73,13 +67,6 @@ describe('Launches analysis successfully', () => {
 
     cy.waitForGem2s(gem2sTimeOut);
     cy.waitForQc(qcTimeOut);
-
-    // cy.selectProject(projectName, false);
-    cy.log('Moving to Data Processing.');
-    cy.get('button:contains("Go to Data Processing")').click();
-
-    cy.log('Data Processing page should load.');
-    cy.contains('.data-test-page-header', 'Data Processing', { timeout: 60 * 1000 }).should('exist');
 
     cy.log('Moving to Data Exploration.');
     cy.get('.ant-menu-item:contains("Data Exploration")').click();
