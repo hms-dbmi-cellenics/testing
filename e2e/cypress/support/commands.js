@@ -137,14 +137,20 @@ Cypress.Commands.add('randomizeSampleName', (samplePosition) => {
   cy.get('.data-test-sample-cell').eq(samplePosition).find('.anticon-edit').click();
   cy.get('.data-test-sample-cell').eq(samplePosition).find('input').type(`{selectall}{backspace}${randomSampleName}`);
   cy.get('.data-test-sample-cell').eq(samplePosition).find('.anticon-check').click();
+
+  cy.log('Wait until sample name has changed.');
+  cy.contains(randomSampleName, { timeout: 5000 }).should('exist');
 });
 
 Cypress.Commands.add('changeMetadataNames', (metadataPosition) => {
   cy.log('Randomizing metadata values.');
+  const metadataValue = 'TestValue';
 
   cy.get('.anticon-format-painter').eq(metadataPosition).click();
-  cy.get('.ant-popover-content').find('input').type('{selectall}{backspace}').type(`TestValue-${Math.round(Math.random() * 10000)}`);
+  cy.get('.ant-popover-content').find('input').type('{selectall}{backspace}').type(metadataValue);
   cy.contains('button', 'Fill all missing').click();
+
+  cy.contains(metadataValue, { timeout: 5000 }).should('exist');
 });
 
 Cypress.Commands.add('waitForGem2s', (timeout) => {
@@ -175,6 +181,7 @@ Cypress.Commands.add('waitForQc', (timeout, numQcSteps = 7) => {
 Cypress.Commands.add('cleanUpProjectsIfNecessary', () => {
   cy.log('Cleaning up projects if necessary...');
 
+  cy.get('[data-test-id="projects-list"]');
   cy.get('body').then(($body) => {
     if ($body.find('[data-test-class="data-test-project-card"]').length > 0) {
       cy.get('[data-test-class=data-test-project-card]', { timeout: 10000 }).each(($el, index, $list) => {
