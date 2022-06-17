@@ -3,10 +3,10 @@ import '../../support/commands';
 
 import { addFileActions } from '../../constants';
 
-const uploadTimeout = 3 * 60 * 1000; // 3 minutes
+const uploadTimeout = (60 * 1000) * 5; // 5 minutes
 const gem2sTimeOut = (60 * 1000) * 20; // 20 minutes
 const qcTimeOut = (60 * 1000) * 20; // 20 minutes
-const explorationTimeout = (60 * 1000) * 5; // 5 minutes
+const explorationTimeout = (60 * 1000) * 7; // 7 minutes
 
 const projectName = `Integration test ${+new Date()}`;
 const projectDescription = 'Tissue sample from varelse species known as pequeninos.';
