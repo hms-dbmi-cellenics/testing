@@ -26,16 +26,31 @@ on:
         required: false
         default: ''
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   run-e2e:
     name: ${{ format('Run e2e tests for {0}', github.event.inputs.environment) }}
     runs-on: ubuntu-20.04
+    # don't allow two tests to run this section in the environment because they will delete all the
+    # experiments in the first step
+    concurrency:
+        group: ${{ github.event.inputs.environment }}
     steps:
       - id: checkout
         name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - id: setup-node-cache
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'npm'
+          cache-dependency-path: 'e2e'
 
       - id: logging
         name: Log GitHub input context
