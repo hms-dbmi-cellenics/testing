@@ -1,11 +1,6 @@
 /// <reference types="cypress" />
 import '../../support/commands';
 
-import { addFileActions } from '../../constants';
-
-const baseProjectName = 'GSE183716 - Covid19';
-const projectDescription = '';
-
 describe('Launches analysis successfully', () => {
   beforeEach(() => {
     Cypress.config('defaultCommandTimeout', 10000);
@@ -23,29 +18,9 @@ describe('Launches analysis successfully', () => {
 
   Cypress.on('uncaught:exception', () => false);
 
-  it(`creates a new project (${baseProjectName})`, () => {
-    const alias = Cypress.env('E2E_ALIAS');
-    let projectName = `${baseProjectName}`;
-    if (alias) projectName += ` ${alias}`;
-
-    // const projectName = baseProjectName;
-    cy.createProject(projectName, projectDescription);
-
-    cy.log('Check that current active project is correct.');
-    cy.get('#project-details').should(($p) => {
-      expect($p).to.contain(projectName);
-      expect($p).to.contain(projectDescription);
-    });
-
-    cy.log('Check that project list contains our project.');
-    cy.get('[data-test-class=data-test-project-card]', { timeout: 100000 }).should(($p) => {
-      expect($p).to.contain(projectName);
-    });
-
-    cy.selectProject(projectName, false);
-    cy.addSample('P13 Convalescent MISC', addFileActions.SELECT_INPUT);
-    cy.addSample('P13 Acute MISC', addFileActions.SELECT_INPUT);
-    cy.addSample('P14 Acute MISC', addFileActions.SELECT_INPUT);
+  it('Adds workshop dataset', () => {
+    // Clone the new sample dataset
+    cy.get('button:contains("Workshop dataset")').click();
 
     // Sample cell shows up
     cy.contains('.data-test-sample-in-table-name', 'P13 Convalescent MISC', { timeout: 10000 }).should('exist');
