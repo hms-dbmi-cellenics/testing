@@ -27,7 +27,7 @@ on:
         default: ''
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ci-${{ github.event.inputs.environment }}-${{ github.event.inputs.sandboxId }}
   cancel-in-progress: true
 
 jobs:
