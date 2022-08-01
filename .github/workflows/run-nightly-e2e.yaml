@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  K8S_ENV: 'production'
+  K8S_ENV: 'staging'
 
 jobs:
   run-e2e:
