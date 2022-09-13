@@ -22,7 +22,7 @@ module.exports = async (on, config) => {
     };
   }
 
-  const userPoolClient = new CognitoIdentityProviderClient(
+  const userPoolClient = await new CognitoIdentityProviderClient(
     {
       region: 'eu-west-1',
       ...additionalClientParams,
@@ -31,10 +31,8 @@ module.exports = async (on, config) => {
 
   const sandboxId = process.env.SANDBOX_ID || 'default';
 
-  const UserPools = await userPoolClient.send(new ListUserPoolsCommand({ MaxResults: 60 }));
-  console.log('user pool', UserPools, ' role ', fromTokenFile({
-    roleAssumerWithWebIdentity: getDefaultRoleAssumerWithWebIdentity(),
-  }));
+  const {UserPools} = await userPoolClient.send(new ListUserPoolsCommand({ MaxResults: 60 }));
+  console.log('user pool', UserPools);
   // setting the user pool id
   const environment = process.env.K8S_ENV || 'development';
   const cognitoEnv = environment === 'development' ? 'staging' : environment; // development env uses staging cognito pool
