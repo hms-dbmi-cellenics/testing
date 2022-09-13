@@ -31,7 +31,7 @@ module.exports = async (on, config) => {
 
   const sandboxId = process.env.SANDBOX_ID || 'default';
 
-  const { UserPools } = await userPoolClient.send(new ListUserPoolsCommand({ MaxResults: 60 }));
+  const UserPools = await userPoolClient.send(new ListUserPoolsCommand({ MaxResults: 60 }));
   console.log('user pool', UserPools);
   // setting the user pool id
   const environment = process.env.K8S_ENV || 'development';
