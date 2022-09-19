@@ -77,5 +77,8 @@ describe('Launches analysis successfully', () => {
     cy.contains(/(We're getting your data|This will take a few minutes)/).should('exist');
     cy.contains(/(We're getting your data|This will take a few minutes)/, { timeout: explorationTimeout }).should('not.exist');
     cy.get('button:contains("Try again")').should('not.exist');
+
+    // checking the number of louvain clusters in the tree
+    cy.get('.ant-tree-treenode').should('have.length', 8);
   });
 });
