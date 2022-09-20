@@ -63,7 +63,7 @@ jobs:
         run: |-
           # if ENV is set to production check out the latest tag for the nightly build
           if [ "$ENV" = "production" ] && [ "$REF" = "" ]; then
-            latesttag=$(git describe --tags --abbrev=0)
+            latesttag=$(git describe --tags --always --abbrev=0)
             echo "Checking out ${latesttag}"
             git checkout ${latesttag}
           fi
