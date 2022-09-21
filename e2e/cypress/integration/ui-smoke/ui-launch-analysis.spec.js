@@ -79,6 +79,7 @@ describe('Launches analysis successfully', () => {
     for (let i = 0; i < expectedNumClusters; i += 1) {
       cy.contains('span', `Cluster ${i}`).should('exist');
     }
+    cy.contains('span', `Cluster ${expectedNumClusters + 1}`).should('not.exist');
 
     cy.contains(/(We're getting your data|This will take a few minutes)/).should('exist');
     cy.contains(/(We're getting your data|This will take a few minutes)/, { timeout: explorationTimeout }).should('not.exist');
