@@ -15,7 +15,7 @@ endif
 #--------------------------------------------------
 # Targets
 #--------------------------------------------------
-install: clean ## Creates venv, and adds cellenics as system command
+install: clean
 	@echo "==> Instaling dependencies..."
 	@cd e2e && npm install
 	@echo "    [✓]"
