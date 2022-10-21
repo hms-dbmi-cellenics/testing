@@ -90,13 +90,5 @@ module.exports = async (on, config) => {
     throw new Error('CYPRESS_E2E_PASSSWORD must be a valid username for logging into the platform.');
   }
 
-  if (!config.env.AWS_REGION) {
-    throw new Error('AWS_REGION must be a valid aws region for logging into the platform.');
-  }
-
-  if (!config.env.GITHUB_ORG) {
-    throw new Error('GITHUB_ORG must be a valid Github Organization to determine the application URL.');
-  }
-
   return config;
 };
