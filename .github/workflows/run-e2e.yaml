@@ -162,6 +162,8 @@ jobs:
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
           K8S_ENV: ${{ github.event.inputs.environment || 'production' }}
           SANDBOX_ID: ${{ github.event.inputs.sandboxId }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          GITHUB_ORG: ${{ github.repository_owner }}
 
       - id: enable-cronjob
         if: always()
