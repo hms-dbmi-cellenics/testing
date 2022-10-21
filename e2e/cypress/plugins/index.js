@@ -22,9 +22,10 @@ module.exports = async (on, config) => {
     };
   }
 
+  const region = process.env.AWS_REGION || 'eu-west-1';
   const userPoolClient = new CognitoIdentityProviderClient(
     {
-      region: process.env.AWS_REGION,
+      region,
       ...additionalClientParams,
     },
   );
