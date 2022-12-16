@@ -26,32 +26,9 @@ Cypress.Commands.add('login', () => {
 
   cy.wrap(signIn, { log: false, timeout: 10000 }).then((cognitoResponse) => {
     cy.log(cognitoResponse);
-
-    const keyPrefixWithUsername = `${cognitoResponse.keyPrefix}.${cognitoResponse.username}`;
-
     cy.setLocalStorage(
-      `${keyPrefixWithUsername}.idToken`,
+      'idToken',
       cognitoResponse.signInUserSession.idToken.jwtToken,
-    );
-
-    cy.setLocalStorage(
-      `${keyPrefixWithUsername}.accessToken`,
-      cognitoResponse.signInUserSession.accessToken.jwtToken,
-    );
-
-    cy.setLocalStorage(
-      `${keyPrefixWithUsername}.refreshToken`,
-      cognitoResponse.signInUserSession.refreshToken.token,
-    );
-
-    cy.setLocalStorage(
-      `${keyPrefixWithUsername}.clockDrift`,
-      cognitoResponse.signInUserSession.clockDrift,
-    );
-
-    cy.setLocalStorage(
-      `${cognitoResponse.keyPrefix}.LastAuthUser`,
-      cognitoResponse.username,
     );
 
     cy.setLocalStorage('amplify-authenticator-authState', 'signedIn');

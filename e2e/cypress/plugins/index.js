@@ -50,18 +50,21 @@ module.exports = async (on, config) => {
   switch (process.env.K8S_ENV) {
     case 'development': {
       config.baseUrl = 'http://localhost:5000';
+      config.apiUrl = 'http://localhost:3000';
       config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
       break;
     }
 
     case 'staging': {
       config.baseUrl = `https://ui-${sandboxId}.scp-staging.biomage.net`;
+      config.apiUrl = `https://api-${sandboxId}.scp-staging.biomage.net`;
       config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
       break;
     }
 
     case 'production': {
       config.baseUrl = 'https://scp.biomage.net';
+      config.apiUrl = 'https://api.scp.biomage.net';
       config.env.loginUrl = 'biomage.auth.eu-west-1.amazoncognito.com';
       break;
     }
