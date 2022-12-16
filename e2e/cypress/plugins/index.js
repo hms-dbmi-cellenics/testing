@@ -22,9 +22,10 @@ module.exports = async (on, config) => {
     };
   }
 
+  const region = process.env.AWS_REGION || 'eu-west-1';
   const userPoolClient = new CognitoIdentityProviderClient(
     {
-      region: 'eu-west-1',
+      region,
       ...additionalClientParams,
     },
   );
@@ -47,22 +48,32 @@ module.exports = async (on, config) => {
   )).ClientId;
   config.env.clientId = userPoolClientId;
 
+  const urlsByGithubOrg = {
+    'biomage-org': {
+      staging: `https://ui-${sandboxId}.scp-staging.biomage.net`,
+      production: 'https://scp.biomage.net',
+    },
+    'hms-dbmi-cellenics': {
+      staging: `https://ui-${sandboxId}.staging.single-cell-platform.net`,
+      production: 'https://cellenics.hms.harvard.edu',
+    },
+  };
+
+  const urls = urlsByGithubOrg[process.env.GITHUB_ORG];
+
   switch (process.env.K8S_ENV) {
     case 'development': {
       config.baseUrl = 'http://localhost:5000';
-      config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
       break;
     }
 
     case 'staging': {
-      config.baseUrl = `https://ui-${sandboxId}.scp-staging.biomage.net`;
-      config.env.loginUrl = 'biomage-staging.auth.eu-west-1.amazoncognito.com';
+      config.baseUrl = urls.staging;
       break;
     }
 
     case 'production': {
-      config.baseUrl = 'https://scp.biomage.net';
-      config.env.loginUrl = 'biomage.auth.eu-west-1.amazoncognito.com';
+      config.baseUrl = urls.production;
       break;
     }
 
@@ -70,6 +81,7 @@ module.exports = async (on, config) => {
       throw new Error('K8S_ENV must be set to either \'development\', \'staging\', or \'production\'');
     }
   }
+
   if (!config.env.E2E_USERNAME) {
     throw new Error('CYPRESS_E2E_USERNAME must be a valid username for log into the platform.');
   }

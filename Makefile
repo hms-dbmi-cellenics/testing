@@ -7,15 +7,15 @@
 # Variables
 #--------------------------------------------------
 ifeq ($(shell uname -s),Darwin)
-    ENTRY_POINT=/usr/local/bin/biomage
+    ENTRY_POINT=/usr/local/bin/cellenics
 else
-    ENTRY_POINT=/usr/bin/biomage
+    ENTRY_POINT=/usr/bin/cellenics
 endif
 
 #--------------------------------------------------
 # Targets
 #--------------------------------------------------
-install: clean ## Creates venv, and adds biomage as system command
+install: clean
 	@echo "==> Instaling dependencies..."
 	@cd e2e && npm install
 	@echo "    [✓]"

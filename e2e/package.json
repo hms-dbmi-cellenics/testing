@@ -1,10 +1,10 @@
 {
   "name": "e2e",
   "version": "1.0.0",
-  "description": "End-to-end testing of Biomage single-cell platform",
+  "description": "End-to-end testing of Cellenics single-cell platform",
   "main": "index.js",
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "cypress": "^9.7.0",
     "cypress-terminal-report": "^4.0.1",

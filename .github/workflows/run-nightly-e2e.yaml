@@ -25,7 +25,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - id: install
         name: Install dependencies
@@ -42,6 +42,8 @@ jobs:
         env:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          GITHUB_ORG: ${{ github.repository_owner }}
 
       - id: send-to-slack
         name: Send failure notification to Slack on failure
