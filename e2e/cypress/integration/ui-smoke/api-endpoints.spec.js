@@ -16,7 +16,7 @@ describe('API endpoints work as expected', () => {
   });
 
   it('Api endpoints work for experiments', () => {
-    // create experiment
+    cy.log(`create experiment ${jwt}`);
     const requestHeaders = getRequestHeader();
 
     cy.request({
@@ -32,7 +32,7 @@ describe('API endpoints work as expected', () => {
       expect(response.status).equal(200);
     });
 
-    // get experiment
+    cy.log('get experiment');
     cy.request({
       method: 'GET',
       url: `${apiUrl}/v2/experiments/${experimentId}`,
@@ -41,7 +41,7 @@ describe('API endpoints work as expected', () => {
       expect(response.status).equal(200);
     });
 
-    // patch experiment
+    cy.log('patch experiment');
     cy.request({
       method: 'PATCH',
       url: `${apiUrl}/v2/experiments/${experimentId}`,
@@ -53,7 +53,7 @@ describe('API endpoints work as expected', () => {
       expect(response.status).equal(200);
     });
 
-    // create sample file
+    cy.log('create sample file');
     cy.request({
       method: 'POST',
       url: `${apiUrl}/v2/experiments/${experimentId}/samples`,
@@ -67,7 +67,7 @@ describe('API endpoints work as expected', () => {
       const sampleId = response.body.sampleName;
       expect(Object.keys(response.body)[0]).equal('sampleName');
 
-      // create sample file
+      cy.log('create sample file');
       cy.request({
         method: 'POST',
         url: `${apiUrl}/v2/experiments/${experimentId}/samples/${sampleId}/sampleFiles/barcodes10x`,
@@ -81,7 +81,7 @@ describe('API endpoints work as expected', () => {
         expect(createSampleFileResponse.status).equal(200);
       });
 
-      // patch sample
+      cy.log('patch sample');
       cy.request({
         method: 'PATCH',
         url: `${apiUrl}/v2/experiments/${experimentId}/samples/${sampleId}`,
@@ -93,7 +93,7 @@ describe('API endpoints work as expected', () => {
         expect(patchSampleResponse.status).equal(200);
       });
 
-      // patch sample file
+      cy.log('patch sample file');
       cy.request({
         method: 'PATCH',
         url: `${apiUrl}/v2/experiments/${experimentId}/samples/${sampleId}/sampleFiles/barcodes10x`,
@@ -105,7 +105,7 @@ describe('API endpoints work as expected', () => {
         expect(patchSampleFileResponse.status).equal(200);
       });
 
-      // delete sample
+      cy.log('delete sample');
       cy.request({
         method: 'DELETE',
         url: `${apiUrl}/v2/experiments/${experimentId}/samples/${sampleId}`,
@@ -115,7 +115,7 @@ describe('API endpoints work as expected', () => {
       });
     });
 
-    // get userpool client id
+    cy.log('get userpool client id');
     cy.request({
       method: 'GET',
       url: `${apiUrl}/v2/programmaticInterfaceClient`,
@@ -129,7 +129,7 @@ describe('API endpoints work as expected', () => {
   });
 
   after(() => {
-    // deleting created experiment
+    cy.log('deleting created experiment');
     cy.request({
       method: 'DELETE',
       url: `${apiUrl}/v2/experiments/${experimentId}`,
