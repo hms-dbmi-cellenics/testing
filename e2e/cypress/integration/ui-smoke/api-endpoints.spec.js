@@ -8,7 +8,7 @@ describe('API endpoints work as expected', () => {
 
   const { apiUrl } = Cypress.config();
   const experimentId = '38eacf24-3f53-45ab-997d-36df0944f05d';
-  const jwt = localStorage.getItem('idToken');
+  const jwt = Cypress.env('jwt');
 
   const getRequestHeader = () => ({
     'Content-Type': 'application/json',

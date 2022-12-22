@@ -26,14 +26,9 @@ Cypress.Commands.add('login', () => {
 
   cy.wrap(signIn, { log: false, timeout: 10000 }).then((cognitoResponse) => {
     cy.log(cognitoResponse);
-    cy.setLocalStorage(
-      'idToken',
-      cognitoResponse.signInUserSession.idToken.jwtToken,
-    );
-
+    Cypress.env('jwt', cognitoResponse.signInUserSession.idToken.jwtToken);
     cy.setLocalStorage('amplify-authenticator-authState', 'signedIn');
     cy.setLocalStorage('amplify-signin-with-hostedUI', 'true');
-
     log.end();
   });
 });
