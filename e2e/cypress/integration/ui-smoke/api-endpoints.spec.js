@@ -8,16 +8,16 @@ describe('API endpoints work as expected', () => {
 
   const { apiUrl } = Cypress.config();
   const experimentId = '38eacf24-3f53-45ab-997d-36df0944f05d';
-  const jwt = Cypress.env('jwt');
-
-  const getRequestHeader = () => ({
+  const getRequestHeader = (jwt) => ({
     'Content-Type': 'application/json',
     Authorization: `Bearer ${jwt}`,
   });
 
   it('Api endpoints work for experiments', () => {
+    const jwt = Cypress.env('jwt');
+
     cy.log(`create experiment ${jwt}`);
-    const requestHeaders = getRequestHeader();
+    const requestHeaders = getRequestHeader(jwt);
 
     cy.request({
       method: 'POST',
@@ -130,10 +130,11 @@ describe('API endpoints work as expected', () => {
 
   after(() => {
     cy.log('deleting created experiment');
+    const jwt = Cypress.env('jwt');
     cy.request({
       method: 'DELETE',
       url: `${apiUrl}/v2/experiments/${experimentId}`,
-      headers: getRequestHeader(),
+      headers: getRequestHeader(jwt),
     }).then((response) => {
       expect(response.status).equal(200);
     });
