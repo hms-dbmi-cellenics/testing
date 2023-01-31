@@ -77,6 +77,7 @@ describe('Launches analysis successfully', () => {
 
     const numOfClusters = 5;
     // each cluster is duplicated so we multiply by 2
+    cy.get(':nth-child(1) > .ant-tree-switcher > .anticon > svg').click();
     cy.get('div > div > div > div > span:contains("Cluster")').should('have.length', numOfClusters * 2);
 
     cy.contains(/(We're getting your data|This will take a few minutes)/).should('exist');
