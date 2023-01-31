@@ -67,6 +67,7 @@ Cypress.Commands.add('addMetadata', () => {
   cy.log('Adding metadata track.');
 
   cy.contains('button', 'Add metadata').click();
+  cy.contains('Create track').click();
   cy.contains('.ant-popover', 'Provide new metadata track name').find('.anticon-check').click();
 });
 
