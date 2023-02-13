@@ -1,9 +1,9 @@
 import 'cypress-wait-until';
 import 'cypress-localstorage-commands';
 
+import { Auth } from 'aws-amplify';
 import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
 
-import { Auth } from 'aws-amplify';
 import { addFileActions } from '../constants';
 
 Cypress.Commands.add('login', () => {
@@ -36,7 +36,9 @@ Cypress.Commands.add('login', () => {
 Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   cy.log(`Creating project with name ${projectName}.`);
 
-  cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
+  cy.contains('Create New Project').click({ force: true });
+  cy.contains('Upload Project').click({ force: true });
+
   cy.get('[data-test-id="project-name"]', { timeout: 5000 }).type(projectName);
 
   if (projectDescription) {
