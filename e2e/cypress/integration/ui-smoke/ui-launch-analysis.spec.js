@@ -75,10 +75,14 @@ describe('Launches analysis successfully', () => {
     cy.contains('.data-test-page-header', 'Data Exploration', { timeout: 60 * 1000 }).should('exist');
     cy.log('checking the number of louvain clusters in the tree');
 
-    const numOfClusters = 5;
-    // each cluster is duplicated so we multiply by 2
+    // numOfClusters depends on some random variables, so if the expected and returned values
+    // differ by 1 it should be fine
+    const numClustersOptions = [5, 6];
     cy.get(':nth-child(1) > .ant-tree-switcher > .anticon > svg').click();
-    cy.get('div > div > div > div > span:contains("Cluster")').should('have.length', numOfClusters * 2);
+    // each cluster is duplicated so we multiply by 2
+    cy.get('div > div > div > div > span:contains("Cluster")')
+      .its('length')
+      .should('be.oneOf', numClustersOptions.map((numClusters) => numClusters * 2))
 
     cy.contains(/(We're getting your data|This will take a few minutes)/).should('exist');
     cy.contains(/(We're getting your data|This will take a few minutes)/, { timeout: explorationTimeout }).should('not.exist');
