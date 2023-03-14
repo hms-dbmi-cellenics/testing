@@ -54,7 +54,7 @@ module.exports = async (on, config) => {
       stagingApiUrl: `https://api-${sandboxId}.scp-staging.biomage.net`,
       stagingLoginUrl: 'biomage-staging.auth.eu-west-1.amazoncognito.com',
       production: 'https://scp.biomage.net',
-      productionApiUrl: `https://api.scp.biomage.net`,
+      productionApiUrl: 'https://api.scp.biomage.net',
       productionLoginUrl: 'biomage.auth.eu-west-1.amazoncognito.com',
     },
     'hms-dbmi-cellenics': {
