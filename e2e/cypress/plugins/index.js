@@ -51,11 +51,19 @@ module.exports = async (on, config) => {
   const urlsByGithubOrg = {
     'biomage-org': {
       staging: `https://ui-${sandboxId}.scp-staging.biomage.net`,
+      stagingApiUrl: `https://api-${sandboxId}.scp-staging.biomage.net`,
+      stagingLoginUrl: 'biomage-staging.auth.eu-west-1.amazoncognito.com',
       production: 'https://scp.biomage.net',
+      productionApiUrl: `https://api.scp.biomage.net`,
+      productionLoginUrl: 'biomage.auth.eu-west-1.amazoncognito.com',
     },
     'hms-dbmi-cellenics': {
       staging: `https://ui-${sandboxId}.staging.single-cell-platform.net`,
+      stagingApiUrl: `https://api-${sandboxId}.staging.single-cell-platform.net`,
+      stagingLoginUrl: 'https://hms-auth-staging-160782110667.auth.us-east-1.amazoncognito.com/',
       production: 'https://cellenics.hms.harvard.edu',
+      productionApiUrl: 'https://api.cellenics.hms.harvard.edu',
+      productionLoginUrl: 'https://hms-auth-production-160782110667.auth.us-east-1.amazoncognito.com/',
     },
   };
 
@@ -64,16 +72,22 @@ module.exports = async (on, config) => {
   switch (process.env.K8S_ENV) {
     case 'development': {
       config.baseUrl = 'http://localhost:5000';
+      config.apiUrl = 'http://localhost:3000';
+      config.env.loginUrl = urls.stagingLoginUrl;
       break;
     }
 
     case 'staging': {
       config.baseUrl = urls.staging;
+      config.apiUrl = urls.stagingApiUrl;
+      config.env.loginUrl = urls.stagingLoginUrl;
       break;
     }
 
     case 'production': {
       config.baseUrl = urls.production;
+      config.apiUrl = urls.productionApiUrl;
+      config.env.loginUrl = urls.productionLoginUrl;
       break;
     }
 
@@ -81,7 +95,6 @@ module.exports = async (on, config) => {
       throw new Error('K8S_ENV must be set to either \'development\', \'staging\', or \'production\'');
     }
   }
-
   if (!config.env.E2E_USERNAME) {
     throw new Error('CYPRESS_E2E_USERNAME must be a valid username for log into the platform.');
   }

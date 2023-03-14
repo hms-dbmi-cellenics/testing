@@ -1,9 +1,9 @@
 import 'cypress-wait-until';
 import 'cypress-localstorage-commands';
 
+import { Auth } from 'aws-amplify';
 import { dragAndDropFiles, selectFilesFromInput } from './commandsHelpers';
 
-import { Auth } from 'aws-amplify';
 import { addFileActions } from '../constants';
 
 Cypress.Commands.add('login', () => {
@@ -26,37 +26,9 @@ Cypress.Commands.add('login', () => {
 
   cy.wrap(signIn, { log: false, timeout: 10000 }).then((cognitoResponse) => {
     cy.log(cognitoResponse);
-
-    const keyPrefixWithUsername = `${cognitoResponse.keyPrefix}.${cognitoResponse.username}`;
-
-    cy.setLocalStorage(
-      `${keyPrefixWithUsername}.idToken`,
-      cognitoResponse.signInUserSession.idToken.jwtToken,
-    );
-
-    cy.setLocalStorage(
-      `${keyPrefixWithUsername}.accessToken`,
-      cognitoResponse.signInUserSession.accessToken.jwtToken,
-    );
-
-    cy.setLocalStorage(
-      `${keyPrefixWithUsername}.refreshToken`,
-      cognitoResponse.signInUserSession.refreshToken.token,
-    );
-
-    cy.setLocalStorage(
-      `${keyPrefixWithUsername}.clockDrift`,
-      cognitoResponse.signInUserSession.clockDrift,
-    );
-
-    cy.setLocalStorage(
-      `${cognitoResponse.keyPrefix}.LastAuthUser`,
-      cognitoResponse.username,
-    );
-
+    Cypress.env('jwt', cognitoResponse.signInUserSession.idToken.jwtToken);
     cy.setLocalStorage('amplify-authenticator-authState', 'signedIn');
     cy.setLocalStorage('amplify-signin-with-hostedUI', 'true');
-
     log.end();
   });
 });
@@ -64,7 +36,9 @@ Cypress.Commands.add('login', () => {
 Cypress.Commands.add('createProject', (projectName, projectDescription) => {
   cy.log(`Creating project with name ${projectName}.`);
 
-  cy.get('[data-test-id="create-new-project-button"]').click({ force: true });
+  cy.contains('Create New Project').click({ force: true });
+  cy.contains('Upload Project').click({ force: true });
+
   cy.get('[data-test-id="project-name"]', { timeout: 5000 }).type(projectName);
 
   if (projectDescription) {
@@ -95,6 +69,7 @@ Cypress.Commands.add('addMetadata', () => {
   cy.log('Adding metadata track.');
 
   cy.contains('button', 'Add metadata').click();
+  cy.contains('Create track').click();
   cy.contains('.ant-popover', 'Provide new metadata track name').find('.anticon-check').click();
 });
 
