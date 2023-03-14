@@ -18,7 +18,7 @@
     "@aws-sdk/client-sts": "^3.109.0",
     "@aws-sdk/credential-provider-web-identity": "^3.109.0",
     "aws-amplify": "^4.3.24",
-    "cypress-file-upload": "git+https://git@github.com/hms-dbmi-cellenics/cypress-file-upload.git",
+    "cypress-file-upload": "git+https://git@github.com/biomage-org/cypress-file-upload.git",
     "cypress-localstorage-commands": "^2.1.0",
     "cypress-wait-until": "^1.7.2",
     "uuid": "^8.3.2"
